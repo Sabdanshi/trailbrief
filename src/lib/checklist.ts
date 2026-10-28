@@ -14,7 +14,7 @@ export function buildChecklist(trek: Trek): ChecklistGroup[] {
   const washroom: ChecklistGroup = { title: "Washroom plan", items: [] };
   washroom.items.push({
     id: "use-start",
-    text: `Use the washroom at ${trek.dryStretch.from} before you set off. After that there is none for ${trek.dryStretch.hours} hours, until you are back from ${trek.dryStretch.to}.`,
+    text: `Use the washroom at ${trek.dryStretch.from} before you set off. The stretch after it has no washroom for ${trek.dryStretch.hours} hours.`,
   });
   if (hasDryTop) {
     washroom.items.push(
