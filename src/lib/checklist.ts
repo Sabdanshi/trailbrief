@@ -2,6 +2,44 @@ import type { Trek } from "@/data/treks";
 
 export type ChecklistGroup = { title: string; items: { id: string; text: string }[] };
 
+export type FitnessPlan = { weeks: number; target: string; items: { id: string; text: string }[] };
+
+/** A simple training plan scaled to the trek's difficulty. */
+export function fitnessPlan(trek: Trek): FitnessPlan {
+  switch (trek.difficulty) {
+    case "Easy":
+      return {
+        weeks: 2,
+        target: "Walk 5 km comfortably without stopping.",
+        items: [
+          { id: "fit-walk", text: "Walk briskly for 30–45 minutes, 5 days a week." },
+          { id: "fit-stairs", text: "Climb 10 floors of stairs, 3 times a week." },
+        ],
+      };
+    case "Easy–moderate":
+      return {
+        weeks: 4,
+        target: "Walk or jog 4 km in about 30 minutes.",
+        items: [
+          { id: "fit-cardio", text: "Brisk walk or jog 4 km, 4 days a week." },
+          { id: "fit-stairs", text: "Climb 15 floors of stairs, 3 times a week." },
+          { id: "fit-legs", text: "Squats and lunges, 3 sets of 15, 3 times a week." },
+        ],
+      };
+    default:
+      return {
+        weeks: 6,
+        target: "Jog 5 km in under 40 minutes.",
+        items: [
+          { id: "fit-cardio", text: "Jog 5 km, 4 days a week, getting a little faster each week." },
+          { id: "fit-stairs", text: "Stair climbs with a 5 kg backpack, 3 times a week." },
+          { id: "fit-legs", text: "Squats and lunges, 3 sets of 15, 3 times a week." },
+          { id: "fit-long", text: "One long walk of 10 km or more every weekend." },
+        ],
+      };
+  }
+}
+
 /** Prep checklist derived from what is (and isn't) on this trail. */
 export function buildChecklist(trek: Trek): ChecklistGroup[] {
   const hasDryTop = trek.points.some((p) => p.washroom === "no");
@@ -10,6 +48,12 @@ export function buildChecklist(trek: Trek): ChecklistGroup[] {
   const w = new Set(trek.wildlife);
 
   const groups: ChecklistGroup[] = [];
+
+  const fit = fitnessPlan(trek);
+  groups.push({
+    title: `Get trek-fit (start ${fit.weeks} weeks before)`,
+    items: [...fit.items, { id: "fit-target", text: `Target: ${fit.target} ${trek.fitnessNote}` }],
+  });
 
   const washroom: ChecklistGroup = { title: "Washroom plan", items: [] };
   washroom.items.push({
@@ -44,6 +88,9 @@ export function buildChecklist(trek: Trek): ChecklistGroup[] {
   }
   safety.items.push(
     { id: "dark", text: "Plan to be back before dark." },
+    ...(trek.maxAltitudeM >= 3000
+      ? [{ id: "altitude", text: "Above 3,000 m: go slow, drink water, and turn back if a headache or nausea gets worse." }]
+      : []),
     { id: "emergency", text: `Save 112 (India emergency) and note the nearest medical help: ${trek.medical}` },
     { id: "cash", text: `Carry enough cash: the last ATM is in ${trek.lastAtm}.` },
   );

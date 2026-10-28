@@ -11,6 +11,7 @@ export type Report = {
   wildlife: string[];
   women_comfort: number | null;
   tip: string | null;
+  recommendation: string | null;
   name: string | null;
   created_at: string;
 };

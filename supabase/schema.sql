@@ -8,6 +8,7 @@ create table if not exists reports (
   wildlife text[] not null default '{}',
   women_comfort int check (women_comfort between 1 and 5),
   tip text check (char_length(tip) <= 280),
+  recommendation text check (char_length(recommendation) <= 200),
   name text check (char_length(name) <= 40),
   created_at timestamptz not null default now()
 );

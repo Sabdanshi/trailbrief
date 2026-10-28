@@ -10,6 +10,7 @@ export type Briefing = {
   womenComfort: { average: number; count: number } | null;
   wildlife: { name: string; count: number; lastSeen: string | null; fromBase: boolean }[];
   tips: { text: string; name: string | null; date: string }[];
+  recommendations: { text: string; name: string | null; date: string }[];
 };
 
 /** Combine the base trail data with what trekkers reported. */
@@ -51,6 +52,10 @@ export function buildBriefing(trek: Trek, reports: Report[]): Briefing {
       .filter((r) => r.tip)
       .slice(0, 5)
       .map((r) => ({ text: r.tip as string, name: r.name, date: r.trek_date })),
+    recommendations: reports
+      .filter((r) => r.recommendation)
+      .slice(0, 5)
+      .map((r) => ({ text: r.recommendation as string, name: r.name, date: r.trek_date })),
   };
 }
 

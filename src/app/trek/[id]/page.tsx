@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getTrek, type TrailPoint } from "@/data/treks";
 import { listReports } from "@/lib/store";
 import { buildBriefing, formatDate, formatDuration, type PointSignal } from "@/lib/briefing";
+import { fitnessPlan } from "@/lib/checklist";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +15,15 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 const washroomLabel = { yes: "Washroom", basic: "Basic washroom", no: "No washroom" } as const;
 const networkLabel = { good: "Network OK", patchy: "Patchy network", none: "No network" } as const;
 
+const sections = [
+  ["overview", "Overview"],
+  ["women", "For women"],
+  ["trail", "Trail"],
+  ["stay-eat", "Stay & eat"],
+  ["fitness", "Fitness"],
+  ["safety", "Safety & medical"],
+] as const;
+
 function Chip({ tone, children }: { tone: "good" | "warn" | "bad"; children: React.ReactNode }) {
   const tones = {
     good: "bg-moss text-forest-dark",
@@ -21,6 +31,25 @@ function Chip({ tone, children }: { tone: "good" | "warn" | "bad"; children: Rea
     bad: "bg-alert-soft text-alert",
   };
   return <span className={`rounded-md px-2 py-0.5 text-xs font-medium ${tones[tone]}`}>{children}</span>;
+}
+
+function SectionTitle({ children }: { children: React.ReactNode }) {
+  return <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted">{children}</h2>;
+}
+
+function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return <div className={`rounded-xl border border-line bg-white p-3 ${className}`}>{children}</div>;
+}
+
+function Quote({ text, name, date }: { text: string; name: string | null; date: string }) {
+  return (
+    <li className="rounded-lg border border-line bg-white p-3">
+      “{text}”
+      <span className="mt-1 block text-xs text-muted">
+        {name || "A trekker"} · {formatDate(date)}
+      </span>
+    </li>
+  );
 }
 
 function Confirmation({ point, signal }: { point: TrailPoint; signal: PointSignal }) {
@@ -56,6 +85,7 @@ export default async function TrekPage({
   if (!trek) notFound();
 
   const briefing = buildBriefing(trek, await listReports(trek.id));
+  const fit = fitnessPlan(trek);
 
   return (
     <>
@@ -69,60 +99,91 @@ export default async function TrekPage({
 
       <h1 className="mt-3 text-2xl font-bold tracking-tight">{trek.name}</h1>
       <p className="text-sm text-muted">{trek.region}</p>
-
-      <dl className="mt-4 grid grid-cols-2 gap-2 text-sm">
-        {[
-          ["Difficulty", trek.difficulty],
-          ["Highest point", `${trek.maxAltitudeM.toLocaleString("en-IN")} m`],
-          ["Distance", `${trek.oneWayKm} km one way from ${trek.start}`],
-          ["Time", `${trek.roundTripHours} h round trip`],
-          ["Best season", trek.bestSeason],
-          ["Permits", trek.permits],
-        ].map(([k, v]) => (
-          <div key={k} className="rounded-lg border border-line bg-white p-2.5">
-            <dt className="text-xs text-muted">{k}</dt>
-            <dd className="font-medium">{v}</dd>
-          </div>
-        ))}
-      </dl>
-
-      <section className="mt-5 rounded-xl border border-amber/40 bg-amber-soft p-4">
-        <p className="text-sm font-medium text-amber">Longest stretch without a washroom</p>
-        <p className="mt-1 text-3xl font-bold">{trek.dryStretch.hours} hours</p>
-        <p className="text-sm text-muted">
-          {trek.dryStretch.from} → {trek.dryStretch.to}
-        </p>
-      </section>
-
-      <p className="mt-3 text-xs text-muted">
+      <p className="mt-1 text-xs text-muted">
         {briefing.reportCount
-          ? `Based on trail data + ${briefing.reportCount} trekker report${briefing.reportCount > 1 ? "s" : ""} (latest trek ${formatDate(briefing.lastReport)}).`
-          : "Based on trail data. No trekker reports yet."}{" "}
+          ? `Trail data + ${briefing.reportCount} trekker report${briefing.reportCount > 1 ? "s" : ""} (latest trek ${formatDate(briefing.lastReport)})`
+          : "Trail data · no trekker reports yet"}
       </p>
 
-      <section className="mt-6 rounded-xl border border-line bg-white p-4">
-        <div className="flex items-baseline justify-between gap-3">
-          <h2 className="font-semibold">For women trekkers</h2>
-          <p className="shrink-0 text-sm">
+      <nav aria-label="Jump to section" className="-mx-4 mt-4 overflow-x-auto px-4">
+        <ul className="flex gap-2 whitespace-nowrap">
+          {sections.map(([anchor, label]) => (
+            <li key={anchor}>
+              <a href={`#${anchor}`} className="block rounded-full border border-line bg-white px-3 py-1.5 text-sm hover:border-forest">
+                {label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      {/* Overview */}
+      <section id="overview" className="scroll-mt-20 pt-6">
+        <dl className="grid grid-cols-2 gap-2 text-sm">
+          {[
+            ["Difficulty", trek.difficulty],
+            ["Highest point", `${trek.maxAltitudeM.toLocaleString("en-IN")} m`],
+            ["Distance", `${trek.oneWayKm} km one way from ${trek.start}`],
+            ["Time", `${trek.roundTripHours} h round trip`],
+          ].map(([k, v]) => (
+            <Card key={k}>
+              <dt className="text-xs text-muted">{k}</dt>
+              <dd className="font-medium">{v}</dd>
+            </Card>
+          ))}
+        </dl>
+        <Card className="mt-2 text-sm">
+          <p className="text-xs text-muted">Best time to go</p>
+          <p className="font-medium">{trek.bestSeason}</p>
+          <p className="mt-1 text-muted">{trek.bestTimeNote}</p>
+        </Card>
+        <Card className="mt-2 text-sm">
+          <p className="text-xs text-muted">Permits</p>
+          <p>{trek.permits}</p>
+        </Card>
+        <Card className="mt-2 text-sm">
+          <p className="text-xs text-muted">How to reach</p>
+          <p>{trek.gettingThere}</p>
+        </Card>
+
+        <div className="mt-4 rounded-xl border border-amber/40 bg-amber-soft p-4">
+          <p className="text-sm font-medium text-amber">Longest stretch without a washroom</p>
+          <p className="mt-1 text-3xl font-bold">{trek.dryStretch.hours} hours</p>
+          <p className="text-sm text-muted">
+            {trek.dryStretch.from} → {trek.dryStretch.to}
+          </p>
+        </div>
+      </section>
+
+      {/* For women */}
+      <section id="women" className="scroll-mt-20 pt-8">
+        <div className="mb-3 flex items-baseline justify-between gap-3">
+          <SectionTitle>For women trekkers</SectionTitle>
+          <p className="mb-3 shrink-0 text-sm">
             {briefing.womenComfort ? (
               <>
                 <strong>{briefing.womenComfort.average}/5</strong>{" "}
-                <span className="text-muted">comfort · {briefing.womenComfort.count} rating{briefing.womenComfort.count > 1 ? "s" : ""}</span>
+                <span className="text-muted">
+                  comfort · {briefing.womenComfort.count} rating{briefing.womenComfort.count > 1 ? "s" : ""}
+                </span>
               </>
             ) : (
               <span className="text-muted">No comfort ratings yet</span>
             )}
           </p>
         </div>
-        <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm">
-          {trek.forWomen.map((t) => (
-            <li key={t}>{t}</li>
-          ))}
-        </ul>
+        <Card>
+          <ul className="list-disc space-y-1.5 pl-5 text-sm">
+            {trek.forWomen.map((t) => (
+              <li key={t}>{t}</li>
+            ))}
+          </ul>
+        </Card>
       </section>
 
-      <section className="mt-6">
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted">On the trail, going up</h2>
+      {/* Trail */}
+      <section id="trail" className="scroll-mt-20 pt-8">
+        <SectionTitle>On the trail, going up</SectionTitle>
         <ol className="relative space-y-4 border-l-2 border-line pl-5">
           {trek.points.map((p) => (
             <li key={p.id} className="relative">
@@ -132,7 +193,7 @@ export default async function TrekPage({
                   p.washroom === "no" ? "bg-alert" : "bg-forest"
                 }`}
               />
-              <div className="rounded-xl border border-line bg-white p-3">
+              <Card>
                 <div className="flex items-baseline justify-between gap-2">
                   <p className="font-semibold">{p.name}</p>
                   <p className="shrink-0 text-xs text-muted">
@@ -153,77 +214,118 @@ export default async function TrekPage({
                 </div>
                 {p.note && <p className="mt-2 text-sm text-muted">{p.note}</p>}
                 <Confirmation point={p} signal={briefing.points[p.id]} />
-              </div>
+              </Card>
             </li>
           ))}
         </ol>
-      </section>
 
-      <section className="mt-6">
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted">Wildlife seen by trekkers</h2>
-        {briefing.wildlife.length ? (
-          <ul className="flex flex-wrap gap-2">
-            {briefing.wildlife.map((w) => (
-              <li key={w.name} className="rounded-lg border border-line bg-white px-3 py-2 text-sm">
-                <span className="font-medium">{w.name}</span>
-                <span className="block text-xs text-muted">
-                  {w.count
-                    ? `${w.count} report${w.count > 1 ? "s" : ""} · last ${formatDate(w.lastSeen)}`
-                    : "Known in this area"}
-                </span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-sm text-muted">Nothing reported.</p>
-        )}
+        <h3 className="mb-2 mt-6 font-semibold">Wildlife seen by trekkers</h3>
+        <ul className="flex flex-wrap gap-2">
+          {briefing.wildlife.map((w) => (
+            <li key={w.name} className="rounded-lg border border-line bg-white px-3 py-2 text-sm">
+              <span className="font-medium">{w.name}</span>
+              <span className="block text-xs text-muted">
+                {w.count ? `${w.count} report${w.count > 1 ? "s" : ""} · last ${formatDate(w.lastSeen)}` : "Known in this area"}
+              </span>
+            </li>
+          ))}
+        </ul>
         <p className="mt-2 text-xs text-muted">
           Sightings are reported by trekkers and are not a safety guarantee. Follow forest department and local guide advice.
         </p>
       </section>
 
-      <section className="mt-6">
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted">Getting there and staying</h2>
-        <dl className="space-y-2 text-sm">
-          {[
-            ["How to reach", trek.gettingThere],
-            ["Where to stay", trek.stay],
-            ["Last ATM", trek.lastAtm],
-          ].map(([k, v]) => (
-            <div key={k} className="rounded-lg border border-line bg-white p-3">
-              <dt className="text-xs text-muted">{k}</dt>
-              <dd>{v}</dd>
-            </div>
+      {/* Stay & eat */}
+      <section id="stay-eat" className="scroll-mt-20 pt-8">
+        <SectionTitle>Where to stay and eat</SectionTitle>
+        <ul className="space-y-2 text-sm">
+          {trek.stayOptions.map((s) => (
+            <li key={s.place}>
+              <Card>
+                <div className="flex items-baseline justify-between gap-2">
+                  <p className="font-semibold">🛏 {s.place}</p>
+                  <p className="shrink-0 text-xs text-muted">{s.price}</p>
+                </div>
+                <p className="mt-1">{s.what}</p>
+              </Card>
+            </li>
           ))}
-        </dl>
-      </section>
-
-      <section className="mt-6 rounded-xl border border-alert/30 bg-alert-soft p-4 text-sm">
-        <h2 className="font-semibold text-alert">In an emergency</h2>
-        <p className="mt-1">
-          Call <a href="tel:112" className="font-semibold underline">112</a> (India emergency number).
-        </p>
-        <p className="mt-1">Nearest medical help: {trek.medical}</p>
-      </section>
-
-      {(briefing.tips.length > 0 || trek.tips.length > 0) && (
-        <section className="mt-6">
-          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted">Good to know</h2>
-          <ul className="space-y-2 text-sm">
-            {briefing.tips.map((t, i) => (
-              <li key={`r${i}`} className="rounded-lg bg-white p-3 border border-line">
-                “{t.text}”
-                <span className="mt-1 block text-xs text-muted">
-                  {t.name || "A trekker"} · {formatDate(t.date)}
-                </span>
-              </li>
-            ))}
-            {trek.tips.map((t) => (
-              <li key={t} className="rounded-lg bg-white p-3 border border-line">{t}</li>
+        </ul>
+        <Card className="mt-2 text-sm">
+          <p className="font-semibold">🍲 Food</p>
+          <ul className="mt-1 list-disc space-y-1 pl-5">
+            {trek.eatOptions.map((e) => (
+              <li key={e}>{e}</li>
             ))}
           </ul>
-        </section>
-      )}
+        </Card>
+        <p className="mt-2 text-xs text-muted">Prices are approximate and change with the season. Last ATM: {trek.lastAtm}.</p>
+
+        {briefing.recommendations.length > 0 && (
+          <>
+            <h3 className="mb-2 mt-4 font-semibold">Trekkers recommend</h3>
+            <ul className="space-y-2 text-sm">
+              {briefing.recommendations.map((r, i) => (
+                <Quote key={i} {...r} />
+              ))}
+            </ul>
+          </>
+        )}
+      </section>
+
+      {/* Fitness */}
+      <section id="fitness" className="scroll-mt-20 pt-8">
+        <SectionTitle>Get trek-fit</SectionTitle>
+        <Card className="text-sm">
+          <p>
+            Start <strong>{fit.weeks} weeks</strong> before. Goal: <strong>{fit.target}</strong>
+          </p>
+          <ul className="mt-2 list-disc space-y-1 pl-5">
+            {fit.items.map((i) => (
+              <li key={i.id}>{i.text}</li>
+            ))}
+          </ul>
+          <p className="mt-2 text-muted">{trek.fitnessNote}</p>
+        </Card>
+      </section>
+
+      {/* Safety & medical */}
+      <section id="safety" className="scroll-mt-20 pt-8">
+        <SectionTitle>Safety and medical help</SectionTitle>
+        <div className="rounded-xl border border-alert/30 bg-alert-soft p-4 text-sm">
+          <p>
+            Emergency: call{" "}
+            <a href="tel:112" className="font-semibold underline">
+              112
+            </a>{" "}
+            (all-India emergency number).
+          </p>
+          <p className="mt-1">
+            <strong>Medical help:</strong> {trek.medical}
+          </p>
+          {trek.maxAltitudeM >= 3000 && (
+            <p className="mt-1">
+              <strong>Altitude:</strong> above 3,000 m. Go slow, drink water, and turn back if a headache or nausea gets worse.
+            </p>
+          )}
+        </div>
+
+        {(briefing.tips.length > 0 || trek.tips.length > 0) && (
+          <>
+            <h3 className="mb-2 mt-6 font-semibold">Good to know</h3>
+            <ul className="space-y-2 text-sm">
+              {briefing.tips.map((t, i) => (
+                <Quote key={i} {...t} />
+              ))}
+              {trek.tips.map((t) => (
+                <li key={t} className="rounded-lg border border-line bg-white p-3">
+                  {t}
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+      </section>
 
       <div className="sticky bottom-4 mt-8">
         <Link

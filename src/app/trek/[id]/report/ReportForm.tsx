@@ -109,6 +109,16 @@ export default function ReportForm({ trekId, washroomPoints, wildlife }: Props) 
       </label>
 
       <label className="block">
+        <span className="text-sm font-semibold">Recommend a place to stay or eat (optional)</span>
+        <input
+          name="recommendation"
+          maxLength={200}
+          placeholder="e.g. Stayed at a homestay in Sari, great food, ₹1,200 a night."
+          className="mt-2 block w-full rounded-lg border border-line bg-white px-3 py-2.5 text-sm"
+        />
+      </label>
+
+      <label className="block">
         <span className="text-sm font-semibold">Your first name (optional)</span>
         <input name="name" maxLength={40} className="mt-2 block w-full rounded-lg border border-line bg-white px-3 py-2.5" />
       </label>

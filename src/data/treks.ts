@@ -31,7 +31,12 @@ export type Trek = {
   maxAltitudeM: number;
   permits: string;
   gettingThere: string;
-  stay: string;
+  /** Extra advice on when to go (and when not to). */
+  bestTimeNote: string;
+  stayOptions: { place: string; what: string; price: string }[];
+  eatOptions: string[];
+  /** The part of this trek that needs specific training. */
+  fitnessNote: string;
   lastAtm: string;
   medical: string;
   /** What women trekkers most often ask about: privacy, safety, crowds, clothing. */
@@ -66,10 +71,13 @@ export const treks: Trek[] = [
     maxAltitudeM: 3658,
     permits: "Forest entry permit at the park gate (per person, valid 3 days). Carry an ID.",
     gettingThere: "Rishikesh → Govindghat by road (about 10 h) → 10 km trek or helicopter to Ghangaria.",
-    stay: "Hotels and guesthouses in Ghangaria. No stay inside the park.",
     lastAtm: "Joshimath",
     medical: "Basic health centre in Ghangaria; hospital in Joshimath.",
     forWomen: ["No washroom or changing spot inside the valley: change and use the washroom in Ghangaria.", "The trail is shared with Hemkund Sahib pilgrims, so you are rarely alone in daytime.", "Monsoon season: carry a poncho and quick-dry layers; wet clothes are hard to change on the trail."],
+    bestTimeNote: "Flowers peak from mid-July to mid-August. The park is open June to October and closed in winter.",
+    stayOptions: [{"place": "Ghangaria", "what": "Guesthouses, hotels and a GMVN rest house; the Gurudwara also offers simple stay", "price": "₹1,500–4,000 a night (more in peak season)"}, {"place": "Govindghat", "what": "Hotels, if you arrive late before the climb to Ghangaria", "price": "₹1,000–3,000 a night"}],
+    eatOptions: ["Dhabas in Ghangaria: dal-chawal, parathas, Maggi.", "Free langar at the Ghangaria Gurudwara.", "Nothing is sold inside the valley: pack lunch from Ghangaria."],
+    fitnessNote: "Day 1 is a 10 km climb from Govindghat to Ghangaria before you even reach the valley.",
     points: [
       { id: "ghangaria", name: "Ghangaria", minFromStart: 0, km: 0, washroom: "yes", water: true, food: "yes", network: "patchy", note: "Last proper washroom. Hotels and dhabas." },
       { id: "vof-gate", name: "Park entry gate", minFromStart: 15, km: 0.5, washroom: "basic", water: false, food: "no", network: "none", note: "Entry permit checked here. Plastic is counted." },
@@ -92,10 +100,13 @@ export const treks: Trek[] = [
     maxAltitudeM: 3583,
     permits: "Char Dham yatra registration (free, online) is required.",
     gettingThere: "Rishikesh → Sonprayag by road (about 8 h) → shared jeep to Gaurikund, where the trek starts.",
-    stay: "GMVN huts, tents and dharamshalas at Kedarnath; book ahead in peak season.",
     lastAtm: "Sonprayag / Guptkashi",
     medical: "Medical posts along the route and at Kedarnath.",
     forWomen: ["Washrooms are frequent, with separate women's sections at main stops, but queues can be long.", "Very crowded in peak season; keep valuables close.", "Modest clothing is expected at the temple.", "Ponies and palkis are available if you need to stop walking."],
+    bestTimeNote: "The temple opens around May and closes around Diwali. Avoid July–August: monsoon landslides often close the route.",
+    stayOptions: [{"place": "Kedarnath", "what": "GMVN cottages and tents, dharamshalas", "price": "₹1,000–5,000 a night; book early"}, {"place": "Sonprayag / Guptkashi", "what": "Hotels the night before the trek", "price": "₹1,000–3,000 a night"}],
+    eatOptions: ["Dhabas all along the route: tea, Maggi, parathas.", "Simple meals and bhandaras at Kedarnath."],
+    fitnessNote: "16 km uphill in one day: build endurance with long walks, not just short runs.",
     points: [
       { id: "gaurikund", name: "Gaurikund", minFromStart: 0, km: 0, washroom: "yes", water: true, food: "yes", network: "good" },
       { id: "jungle-chatti", name: "Jungle Chatti", minFromStart: 90, km: 4, washroom: "yes", water: true, food: "yes", network: "good" },
@@ -120,10 +131,13 @@ export const treks: Trek[] = [
     maxAltitudeM: 4000,
     permits: "No trek permit needed for day hikes.",
     gettingThere: "Rishikesh → Chopta by road via Ukhimath (about 8–9 h).",
-    stay: "Camps and basic lodges at Chopta; more options in Ukhimath.",
     lastAtm: "Ukhimath",
     medical: "Nearest health centre in Ukhimath.",
     forWomen: ["Washrooms at Chopta camps are usually shared and basic.", "Busy in daytime; the Chandrashila stretch is quieter, so go with company.", "Modest clothing is expected at the temple."],
+    bestTimeNote: "Clearest Himalayan views in October–November. Snow from December to March; the Chopta road can close.",
+    stayOptions: [{"place": "Chopta", "what": "Camps and tents, usually with meals", "price": "₹1,000–3,000 a night"}, {"place": "Ukhimath / Sari", "what": "Homestays and small hotels", "price": "₹800–2,500 a night"}],
+    eatOptions: ["Dhabas at Chopta.", "Maggi and tea points along the trail up to Tungnath."],
+    fitnessNote: "Short but steep throughout; the last stretch to Chandrashila is the steepest.",
     points: [
       { id: "chopta", name: "Chopta", minFromStart: 0, km: 0, washroom: "basic", water: true, food: "yes", network: "patchy" },
       { id: "tungnath-dhabas", name: "Mid-way dhabas", minFromStart: 60, km: 1.8, washroom: "no", water: true, food: "yes", network: "patchy" },
@@ -146,10 +160,13 @@ export const treks: Trek[] = [
     maxAltitudeM: 2438,
     permits: "Forest entry fee at the checkpost.",
     gettingThere: "Rishikesh → Sari village by road via Ukhimath (about 8 h).",
-    stay: "Homestays in Sari. No overnight camping at the lake.",
     lastAtm: "Ukhimath",
     medical: "Nearest health centre in Ukhimath.",
     forWomen: ["Use a homestay washroom in Sari before you start; there is none at the lake.", "Short, popular trail; comfortable for small groups of women.", "Start back well before dark: the forest path has no lights."],
+    bestTimeNote: "October–November mornings give the clearest Chaukhamba reflection in the lake.",
+    stayOptions: [{"place": "Sari village", "what": "Homestays with home-cooked meals", "price": "₹800–2,000 a night"}],
+    eatOptions: ["Homestay meals in Sari.", "Tea and snack stalls near the lake."],
+    fitnessNote: "A gentle climb; fine for beginners with basic fitness.",
     points: [
       { id: "sari", name: "Sari village", minFromStart: 0, km: 0, washroom: "yes", water: true, food: "yes", network: "good", note: "Homestays and shops." },
       { id: "deoria-mid", name: "Mid-trail stall", minFromStart: 45, km: 1.3, washroom: "no", water: true, food: "seasonal", network: "patchy" },
@@ -171,10 +188,13 @@ export const treks: Trek[] = [
     maxAltitudeM: 1100,
     permits: "Small entry fee at the bridges.",
     gettingThere: "Shillong → Sohra (Cherrapunji) → Tyrna village by road (about 2.5 h).",
-    stay: "Homestays in Nongriat (shared bathrooms) or hotels in Sohra.",
     lastAtm: "Sohra (Cherrapunji)",
     medical: "Health centre in Sohra.",
     forWomen: ["Nongriat homestays have shared, basic bathrooms; carry your own toiletries.", "Changing spots near the natural pools are limited: wear quick-dry clothes.", "Very steep steps: knees take a beating on the way down."],
+    bestTimeNote: "Avoid heavy monsoon (June–August): the steps get slippery and rivers rise. Winter is dry and pleasant.",
+    stayOptions: [{"place": "Nongriat", "what": "Village homestays, shared bathrooms, meals included", "price": "₹500–1,500 a night"}, {"place": "Sohra (Cherrapunji)", "what": "Hotels and resorts", "price": "₹1,500–5,000 a night"}],
+    eatOptions: ["Home-cooked Khasi meals at Nongriat homestays.", "Snack and juice shops along the steps."],
+    fitnessNote: "About 3,500 steps down and then back up: train on stairs.",
     points: [
       { id: "tyrna", name: "Tyrna village (top of the steps)", minFromStart: 0, km: 0, washroom: "yes", water: true, food: "yes", network: "good" },
       { id: "steps-shops", name: "Shops on the steps", minFromStart: 60, km: 1.5, washroom: "no", water: true, food: "yes", network: "patchy" },
@@ -197,10 +217,13 @@ export const treks: Trek[] = [
     maxAltitudeM: 1084,
     permits: "No permit needed.",
     gettingThere: "Local train from Pune or Lonavala to Malavli station, then walk to Bhaje village.",
-    stay: "No stay at the fort; hotels in Lonavala.",
     lastAtm: "Malavli / Lonavala",
     medical: "Hospitals in Lonavala.",
     forWomen: ["No washroom on the climb or the fort: plan for 3–4 hours without one.", "Very crowded on monsoon weekends; weekdays are quieter.", "Rocks are slippery: wear shoes with grip, not sports sandals."],
+    bestTimeNote: "Best in monsoon for waterfalls and greenery, but very slippery. Go on a weekday to avoid crowds.",
+    stayOptions: [{"place": "Lonavala", "what": "Hotels and homestays (no stay at the fort)", "price": "₹1,500–5,000 a night"}],
+    eatOptions: ["Vada pav and bhajiya at Bhaje village.", "Seasonal stalls on the climb in monsoon.", "Dhabas near Malavli station."],
+    fitnessNote: "Rocky, steep sections, some through waterfalls: practise uphill walking.",
     points: [
       { id: "malavli", name: "Malavli station", minFromStart: 0, km: 0, washroom: "yes", water: true, food: "yes", network: "good" },
       { id: "bhaje", name: "Bhaje village (base)", minFromStart: 30, km: 2, washroom: "basic", water: true, food: "yes", network: "good", note: "Restaurants may let you use their washroom." },
