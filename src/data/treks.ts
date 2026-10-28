@@ -93,7 +93,7 @@ export const treks: Trek[] = [
     region: "Rudraprayag, Uttarakhand",
     start: "Gaurikund",
     oneWayKm: 16,
-    roundTripHours: "16–18",
+    roundTripHours: "17–20",
     bestSeason: "May – June, September – October",
     dryStretch: { hours: "about 2", from: "Gaurikund", to: "Jungle Chatti" },
     difficulty: "Moderate",
