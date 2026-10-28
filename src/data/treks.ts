@@ -10,6 +10,8 @@ export type TrailPoint = {
   /** Typical walking time from the start, going up, in minutes. */
   minFromStart: number;
   km: number;
+  /** For multi-day treks: which day of walking this point is on. minFromStart then counts from that day's start. */
+  day?: number;
   washroom: Washroom;
   water: boolean;
   food: "yes" | "seasonal" | "no";
@@ -23,7 +25,10 @@ export type Trek = {
   region: string;
   start: string;
   oneWayKm: number;
-  roundTripHours: string;
+  walkingTime: string;
+  daysNeeded: { onFoot: string; total: string };
+  /** How people usually stay overnight: camping, homestays, hotels or none. */
+  howPeopleStay: string;
   bestSeason: string;
   /** The longest stretch without any washroom, written for the trekker. */
   dryStretch: { hours: string; from: string; to: string };
@@ -64,7 +69,9 @@ export const treks: Trek[] = [
     region: "Chamoli, Uttarakhand",
     start: "Ghangaria",
     oneWayKm: 4,
-    roundTripHours: "5–6",
+    walkingTime: "5–6 h round trip from Ghangaria",
+    daysNeeded: {"onFoot": "2–3 days (Govindghat → Ghangaria, valley day, return)", "total": "5–6 days from Rishikesh"},
+    howPeopleStay: "No camping inside the park. Everyone stays in Ghangaria hotels or guesthouses and walks into the valley for the day.",
     bestSeason: "July – September",
     dryStretch: { hours: "4–5", from: "Ghangaria", to: "the valley and back" },
     difficulty: "Easy–moderate",
@@ -93,7 +100,9 @@ export const treks: Trek[] = [
     region: "Rudraprayag, Uttarakhand",
     start: "Gaurikund",
     oneWayKm: 16,
-    roundTripHours: "17–20",
+    walkingTime: "10+ h one way walking up; 17–20 h round trip",
+    daysNeeded: {"onFoot": "2 days (walk up, night at Kedarnath, walk down)", "total": "4–5 days from Rishikesh"},
+    howPeopleStay: "Most people stay one night at Kedarnath in GMVN tents or cottages, dharamshalas or private camps near base camp.",
     bestSeason: "May – June, September – October",
     dryStretch: { hours: "about 2", from: "Gaurikund", to: "Jungle Chatti" },
     difficulty: "Moderate",
@@ -124,7 +133,9 @@ export const treks: Trek[] = [
     region: "Chopta, Uttarakhand",
     start: "Chopta",
     oneWayKm: 5,
-    roundTripHours: "5–6",
+    walkingTime: "5–6 h round trip",
+    daysNeeded: {"onFoot": "1 day", "total": "3–4 days from Rishikesh (often combined with Deoria Tal)"},
+    howPeopleStay: "Camping in tents at Chopta is the usual stay; no camping on the trail itself.",
     bestSeason: "April – June, September – November",
     dryStretch: { hours: "about 1.5", from: "Tungnath Temple", to: "Chandrashila peak and back" },
     difficulty: "Easy–moderate",
@@ -153,7 +164,9 @@ export const treks: Trek[] = [
     region: "Sari village, Uttarakhand",
     start: "Sari village",
     oneWayKm: 2.5,
-    roundTripHours: "3",
+    walkingTime: "3 h round trip",
+    daysNeeded: {"onFoot": "Half a day", "total": "3 days from Rishikesh (often combined with Tungnath)"},
+    howPeopleStay: "Homestays in Sari village. Overnight camping at the lake is no longer allowed.",
     bestSeason: "Year-round (snow December – February)",
     dryStretch: { hours: "about 2.5", from: "Sari village", to: "the lake and back" },
     difficulty: "Easy",
@@ -181,7 +194,9 @@ export const treks: Trek[] = [
     region: "Nongriat, Meghalaya",
     start: "Tyrna village",
     oneWayKm: 3,
-    roundTripHours: "5–6",
+    walkingTime: "5–6 h round trip",
+    daysNeeded: {"onFoot": "1 day, or 2 with a night in Nongriat", "total": "3 days from Shillong or Guwahati"},
+    howPeopleStay: "Most do it as a day trip from Sohra; some stay a night in Nongriat village homestays. Camping is not common.",
     bestSeason: "October – April",
     dryStretch: { hours: "about 2", from: "Tyrna", to: "Nongriat village" },
     difficulty: "Moderate",
@@ -210,7 +225,9 @@ export const treks: Trek[] = [
     region: "Lonavala, Maharashtra",
     start: "Malavli station",
     oneWayKm: 4,
-    roundTripHours: "4–5",
+    walkingTime: "4–5 h round trip",
+    daysNeeded: {"onFoot": "Half a day", "total": "1 day from Pune or Mumbai"},
+    howPeopleStay: "Done as a day trek with no overnight stay; stay in Lonavala if you need to.",
     bestSeason: "June – September (monsoon)",
     dryStretch: { hours: "3–4", from: "Bhaje village", to: "the fort and back" },
     difficulty: "Easy–moderate",
@@ -232,6 +249,38 @@ export const treks: Trek[] = [
     ],
     wildlife: ["Snakes", "Monkeys"],
     tips: ["Rocks are very slippery in monsoon; wear shoes with grip.", "Keep food inside your bag; monkeys grab it."],
+  },
+  {
+    id: "har-ki-dun",
+    name: "Har Ki Dun",
+    region: "Uttarkashi, Uttarakhand",
+    start: "Taluka (via Sankri)",
+    oneWayKm: 24,
+    walkingTime: "6–7 h of walking a day",
+    daysNeeded: {"onFoot": "5 days (Taluka → Har Ki Dun → back)", "total": "7 days from Dehradun"},
+    howPeopleStay: "Most people trek with an operator and camp in tents, with toilet tents at each campsite. A few village homestays in Gangad and Osla, and guesthouses in Sankri before and after.",
+    bestSeason: "April – June, September – December",
+    dryStretch: { hours: "5–6", from: "the morning campsite", to: "the next campsite (toilet tents only if you trek with an operator)" },
+    difficulty: "Moderate",
+    maxAltitudeM: 3566,
+    permits: "Forest permit for Govind National Park, from the forest office in Sankri. Trek operators usually arrange it.",
+    gettingThere: "Dehradun → Sankri by road (about 8–10 h) → shared jeep to Taluka (12 km), where the walk starts.",
+    lastAtm: "Purola (don't rely on ATMs in Sankri)",
+    medical: "Basic health centre in Mori; nearest hospital in Purola. No medical help on the trail: carry a first-aid kit.",
+    forWomen: ["No washrooms between villages and camps; at camps you rely on the operator's toilet tents. Ask the operator if there are separate ones for women.", "4–5 days of camping with no bathing: pack wet wipes, dry shampoo, and pads or a cup with opaque disposal bags.", "No network after Sankri for about 5 days: share your dates and operator's contact with family before you go.", "Villages are conservative: modest clothing is appreciated."],
+    bestTimeNote: "Rhododendrons bloom in April–May; October–November has the clearest views. Heavy snow from late December.",
+    stayOptions: [{"place": "Sankri", "what": "Guesthouses and homestays before and after the trek", "price": "₹800–2,000 a night"}, {"place": "On the trail", "what": "Tents at campsites, usually arranged by a trek operator with meals", "price": "Usually included in the operator's trek fee"}, {"place": "Gangad / Osla", "what": "Simple village homestays", "price": "₹500–1,000 a night"}],
+    eatOptions: ["Dhabas in Sankri and Taluka.", "On the trail, the operator's kitchen team cooks all meals.", "Village homestays serve simple home-cooked food."],
+    fitnessNote: "5 days of walking 8–11 km a day up to 3,566 m: build endurance with long walks and stairs with a backpack.",
+    points: [
+      { id: "taluka", name: "Taluka (road head)", day: 1, minFromStart: 0, km: 0, washroom: "basic", water: true, food: "yes", network: "none", note: "Reached by jeep from Sankri. Last shops for snacks." },
+      { id: "gangad", name: "Gangad village", day: 1, minFromStart: 210, km: 7, washroom: "basic", water: true, food: "seasonal", network: "none", note: "A few homestays." },
+      { id: "pauni-garaat", name: "Pauni Garaat campsite", day: 1, minFromStart: 330, km: 11, washroom: "no", water: true, food: "no", network: "none", note: "Campsite: toilet tents only if you are with an operator." },
+      { id: "kalkattiyadhar", name: "Kalkattiyadhar campsite", day: 2, minFromStart: 300, km: 19, washroom: "no", water: true, food: "no", network: "none", note: "Campsite by the stream." },
+      { id: "har-ki-dun", name: "Har Ki Dun valley", day: 3, minFromStart: 180, km: 24, washroom: "no", water: true, food: "no", network: "none", note: "Return to camp the same day. Days 4–5: walk back to Taluka." },
+    ],
+    wildlife: ["Himalayan black bear", "Leopard"],
+    tips: ["Most people trek with an operator who arranges tents, food and permits.", "Carry enough cash for the whole trek: no ATMs or card payments after Sankri."],
   },
 ];
 

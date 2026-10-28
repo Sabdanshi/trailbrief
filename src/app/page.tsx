@@ -18,6 +18,7 @@ export default async function Home() {
       start: trek.start,
       difficulty: trek.difficulty,
       bestSeason: trek.bestSeason,
+      daysOnFoot: trek.daysNeeded.onFoot,
       dryHours: trek.dryStretch.hours,
       reportCount: mine.length,
       lastReport: last ? formatDate(last) : null,

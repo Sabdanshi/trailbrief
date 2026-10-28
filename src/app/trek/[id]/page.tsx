@@ -126,7 +126,7 @@ export default async function TrekPage({
             ["Difficulty", trek.difficulty],
             ["Highest point", `${trek.maxAltitudeM.toLocaleString("en-IN")} m`],
             ["Distance", `${trek.oneWayKm} km one way from ${trek.start}`],
-            ["Time", `${trek.roundTripHours} h round trip`],
+            ["Walking time", trek.walkingTime],
           ].map(([k, v]) => (
             <Card key={k}>
               <dt className="text-xs text-muted">{k}</dt>
@@ -134,6 +134,11 @@ export default async function TrekPage({
             </Card>
           ))}
         </dl>
+        <Card className="mt-2 text-sm">
+          <p className="text-xs text-muted">Days needed</p>
+          <p className="font-medium">On foot: {trek.daysNeeded.onFoot}</p>
+          <p className="text-muted">Whole trip: {trek.daysNeeded.total}</p>
+        </Card>
         <Card className="mt-2 text-sm">
           <p className="text-xs text-muted">Best time to go</p>
           <p className="font-medium">{trek.bestSeason}</p>
@@ -187,11 +192,14 @@ export default async function TrekPage({
       <section id="trail" className="scroll-mt-20 pt-8">
         <SectionTitle>On the trail, going up</SectionTitle>
         <ol className="relative space-y-4 border-l-2 border-line pl-5">
-          {trek.points.map((p) => (
+          {trek.points.map((p, i) => (
             <li key={p.id} className="relative">
+              {p.day && p.day !== trek.points[i - 1]?.day && (
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-forest">Day {p.day}</p>
+              )}
               <span
                 aria-hidden
-                className={`absolute -left-[27px] top-1.5 h-3 w-3 rounded-full border-2 border-paper ${
+                className={`absolute -left-[27px] ${p.day && p.day !== trek.points[i - 1]?.day ? "top-8" : "top-1.5"} h-3 w-3 rounded-full border-2 border-paper ${
                   p.washroom === "no" ? "bg-alert" : "bg-forest"
                 }`}
               />
@@ -199,7 +207,11 @@ export default async function TrekPage({
                 <div className="flex items-baseline justify-between gap-2">
                   <p className="font-semibold">{p.name}</p>
                   <p className="shrink-0 text-xs text-muted">
-                    {p.minFromStart === 0 ? "Start" : `${formatDuration(p.minFromStart)} · ${p.km} km`}
+                    {p.minFromStart === 0
+                      ? "Start"
+                      : p.day
+                        ? `${formatDuration(p.minFromStart)} into the day · at km ${p.km}`
+                        : `${formatDuration(p.minFromStart)} · ${p.km} km`}
                   </p>
                 </div>
                 <div className="mt-2 flex flex-wrap gap-1.5">
@@ -240,6 +252,10 @@ export default async function TrekPage({
       {/* Stay & eat */}
       <section id="stay-eat" className="scroll-mt-20 pt-8">
         <SectionTitle>Where to stay and eat</SectionTitle>
+        <Card className="mb-2 text-sm">
+          <p className="text-xs text-muted">How people stay</p>
+          <p>{trek.howPeopleStay}</p>
+        </Card>
         <ul className="space-y-2 text-sm">
           {trek.stayOptions.map((s) => (
             <li key={s.place}>

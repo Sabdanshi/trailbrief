@@ -83,6 +83,18 @@ export function buildChecklist(trek: Trek): ChecklistGroup[] {
   if (trek.points.some((p) => p.food !== "yes")) water.items.push({ id: "snacks", text: "Pack snacks: food is not available on every stretch." });
   groups.push(water);
 
+  if (trek.points.some((p) => (p.day ?? 1) > 1)) {
+    groups.push({
+      title: "Multi-day camping",
+      items: [
+        { id: "camp-operator", text: "Confirm with your operator: tents, sleeping bags, meals, toilet tents (separate for women?) and permits." },
+        { id: "camp-layers", text: "Warm layers for nights at camp: thermals, fleece, down jacket, woollen cap and gloves." },
+        { id: "camp-light", text: "Headlamp and a power bank: there is no electricity on the trail." },
+        { id: "camp-hygiene", text: "Wet wipes, dry shampoo and a small towel: there is no bathing on the trail." },
+      ],
+    });
+  }
+
   const safety: ChecklistGroup = { title: "Network and safety", items: [] };
   if (noNetwork) {
     safety.items.push(

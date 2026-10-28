@@ -10,6 +10,7 @@ export type TrekCard = {
   start: string;
   difficulty: string;
   bestSeason: string;
+  daysOnFoot: string;
   dryHours: string;
   reportCount: number;
   lastReport: string | null;
@@ -75,7 +76,7 @@ export default function TrekSearch({ treks }: { treks: TrekCard[] }) {
                   <div>
                     <p className="font-semibold">{trek.name}</p>
                     <p className="text-sm text-muted">
-                      {trek.region} · {trek.difficulty}
+                      {trek.region} · {trek.difficulty} · {trek.daysOnFoot.replace(/ \(.*\)$/, "")}
                     </p>
                   </div>
                   <span aria-hidden className="text-muted">→</span>
