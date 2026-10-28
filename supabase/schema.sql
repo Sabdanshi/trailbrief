@@ -22,6 +22,14 @@ create table if not exists feedback (
   created_at timestamptz not null default now()
 );
 
+create table if not exists trek_requests (
+  id uuid primary key default gen_random_uuid(),
+  trek text not null check (char_length(trek) between 2 and 80),
+  name text check (char_length(name) <= 40),
+  created_at timestamptz not null default now()
+);
+
+alter table trek_requests enable row level security;
 alter table reports enable row level security;
 alter table feedback enable row level security;
 
@@ -30,3 +38,4 @@ create policy "read reports" on reports for select using (true);
 create policy "add report" on reports for insert with check (true);
 -- Feedback can be added but only read from the Supabase dashboard.
 create policy "add feedback" on feedback for insert with check (true);
+create policy "add trek request" on trek_requests for insert with check (true);

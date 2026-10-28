@@ -1,20 +1,38 @@
 import Link from "next/link";
 import FeedbackForm from "./FeedbackForm";
+import RequestForm from "./RequestForm";
 
 export const metadata = { title: "Feedback – TrailBrief" };
 
-export default async function FeedbackPage({ searchParams }: { searchParams: Promise<{ thanks?: string }> }) {
-  const { thanks } = await searchParams;
+function Thanks({ text }: { text: string }) {
+  return (
+    <div className="rounded-xl border border-line bg-white p-6 text-center">
+      <h1 className="text-xl font-bold">Thank you!</h1>
+      <p className="mt-2 text-sm text-muted">{text}</p>
+      <Link href="/" className="mt-4 inline-block font-medium text-forest underline underline-offset-4">
+        Back to treks
+      </Link>
+    </div>
+  );
+}
 
-  if (thanks) {
+export default async function FeedbackPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ thanks?: string; request?: string; requested?: string }>;
+}) {
+  const { thanks, request, requested } = await searchParams;
+
+  if (thanks) return <Thanks text="Your feedback goes straight into the next version of TrailBrief." />;
+  if (requested) return <Thanks text="We'll prioritise the treks people ask for most." />;
+
+  if (request !== undefined) {
     return (
-      <div className="rounded-xl border border-line bg-white p-6 text-center">
-        <h1 className="text-xl font-bold">Thank you!</h1>
-        <p className="mt-2 text-sm text-muted">Your feedback goes straight into the next version of TrailBrief.</p>
-        <Link href="/" className="mt-4 inline-block font-medium text-forest underline underline-offset-4">
-          Back to treks
-        </Link>
-      </div>
+      <>
+        <h1 className="text-2xl font-bold tracking-tight">Request a trek</h1>
+        <p className="mt-1 text-sm text-muted">We add new treks based on what trekkers ask for.</p>
+        <RequestForm trek={request} />
+      </>
     );
   }
 

@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { getTrek, WILDLIFE } from "@/data/treks";
-import { addFeedback, addReport, type PointStatus } from "@/lib/store";
+import { addFeedback, addReport, addTrekRequest, type PointStatus } from "@/lib/store";
 
 export type FormState = { error?: string };
 
@@ -45,6 +45,17 @@ export async function submitReport(_: FormState, form: FormData): Promise<FormSt
   revalidatePath("/");
   revalidatePath(`/trek/${trek.id}`);
   redirect(`/trek/${trek.id}?reported=1`);
+}
+
+export async function submitTrekRequest(_: FormState, form: FormData): Promise<FormState> {
+  const trek = clean(form.get("trek"), 80);
+  if (!trek || trek.length < 2) return { error: "Please type the trek you want us to add." };
+  try {
+    await addTrekRequest({ trek, name: clean(form.get("name"), 40) });
+  } catch {
+    return { error: "Couldn't save your request. Please try again." };
+  }
+  redirect("/feedback?requested=1");
 }
 
 export async function submitFeedback(_: FormState, form: FormData): Promise<FormState> {

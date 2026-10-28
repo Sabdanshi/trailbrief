@@ -32,7 +32,11 @@ const supabase: SupabaseClient | null =
   url && key ? createClient(url, key, { auth: { persistSession: false } }) : null;
 
 // Local-only fallback so the app runs before Supabase is connected.
-const memory: { reports: Report[]; feedback: Feedback[] } = { reports: [], feedback: [] };
+const memory: { reports: Report[]; feedback: Feedback[]; requests: { trek: string; name: string | null }[] } = {
+  reports: [],
+  feedback: [],
+  requests: [],
+};
 
 export const usingDatabase = Boolean(supabase);
 
@@ -55,6 +59,15 @@ export async function addReport(report: NewReport) {
     return;
   }
   const { error } = await supabase.from("reports").insert(report);
+  if (error) throw new Error(error.message);
+}
+
+export async function addTrekRequest(request: { trek: string; name: string | null }) {
+  if (!supabase) {
+    memory.requests.push(request);
+    return;
+  }
+  const { error } = await supabase.from("trek_requests").insert(request);
   if (error) throw new Error(error.message);
 }
 
