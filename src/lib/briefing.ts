@@ -1,7 +1,7 @@
 import type { Trek } from "@/data/treks";
 import type { Report } from "@/lib/store";
 
-export type PointSignal = { there: number; missing: number; lastSeen: string | null };
+export type PointSignal = { there: number; dirty: number; missing: number; lastSeen: string | null };
 
 export type Briefing = {
   reportCount: number;
@@ -16,7 +16,7 @@ export type Briefing = {
 /** Combine the base trail data with what trekkers reported. */
 export function buildBriefing(trek: Trek, reports: Report[]): Briefing {
   const points: Record<string, PointSignal> = {};
-  for (const p of trek.points) points[p.id] = { there: 0, missing: 0, lastSeen: null };
+  for (const p of trek.points) points[p.id] = { there: 0, dirty: 0, missing: 0, lastSeen: null };
 
   const wildlife = new Map<string, { count: number; lastSeen: string | null; fromBase: boolean }>();
   for (const w of trek.wildlife) wildlife.set(w, { count: 0, lastSeen: null, fromBase: true });
@@ -26,7 +26,7 @@ export function buildBriefing(trek: Trek, reports: Report[]): Briefing {
       const signal = points[pointId];
       if (!signal) continue;
       signal[status] += 1;
-      if (status === "there" && (!signal.lastSeen || r.trek_date > signal.lastSeen)) signal.lastSeen = r.trek_date;
+      if (status !== "missing" && (!signal.lastSeen || r.trek_date > signal.lastSeen)) signal.lastSeen = r.trek_date;
     }
     for (const w of r.wildlife ?? []) {
       const entry = wildlife.get(w) ?? { count: 0, lastSeen: null, fromBase: false };

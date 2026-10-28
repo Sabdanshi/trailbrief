@@ -24,7 +24,7 @@ export async function submitReport(_: FormState, form: FormData): Promise<FormSt
   const points: Record<string, PointStatus> = {};
   for (const p of trek.points) {
     const v = form.get(`point:${p.id}`);
-    if (v === "there" || v === "missing") points[p.id] = v;
+    if (v === "there" || v === "dirty" || v === "missing") points[p.id] = v;
   }
   const wildlife = form.getAll("wildlife").map(String).filter((w) => (WILDLIFE as readonly string[]).includes(w));
   const tip = clean(form.get("tip"), 280);

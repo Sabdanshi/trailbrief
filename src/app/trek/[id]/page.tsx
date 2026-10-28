@@ -54,18 +54,20 @@ function Quote({ text, name, date }: { text: string; name: string | null; date: 
 
 function Confirmation({ point, signal }: { point: TrailPoint; signal: PointSignal }) {
   if (point.washroom === "no") return null;
-  if (signal.missing > signal.there) {
+  const found = signal.there + signal.dirty;
+  if (signal.missing > found) {
     return (
       <p className="mt-2 text-xs text-alert">
         ⚠ {signal.missing} trekker{signal.missing > 1 ? "s" : ""} said this washroom was closed or not usable
       </p>
     );
   }
-  if (signal.there > 0) {
+  if (found > 0) {
     return (
       <p className="mt-2 text-xs text-forest">
-        ✓ Confirmed by {signal.there} trekker{signal.there > 1 ? "s" : ""} · last on {formatDate(signal.lastSeen)}
-        {signal.missing > 0 && <span className="text-alert"> · {signal.missing} said not usable</span>}
+        ✓ Confirmed by {found} trekker{found > 1 ? "s" : ""} · last on {formatDate(signal.lastSeen)}
+        {signal.dirty > 0 && <span className="text-amber"> · {signal.dirty} said not clean</span>}
+        {signal.missing > 0 && <span className="text-alert"> · {signal.missing} said closed</span>}
       </p>
     );
   }

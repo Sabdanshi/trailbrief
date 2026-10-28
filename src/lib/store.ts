@@ -1,7 +1,8 @@
 import "server-only";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-export type PointStatus = "there" | "missing";
+/** "there" = clean and usable, "dirty" = there but not clean, "missing" = closed or not there. */
+export type PointStatus = "there" | "dirty" | "missing";
 
 export type Report = {
   id: string;

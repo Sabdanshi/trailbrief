@@ -10,8 +10,9 @@ type Props = {
 };
 
 const choices = [
-  { value: "there", label: "Yes, usable" },
-  { value: "missing", label: "No / closed" },
+  { value: "there", label: "Clean" },
+  { value: "dirty", label: "Not clean" },
+  { value: "missing", label: "Closed / none" },
   { value: "", label: "Didn't check" },
 ];
 
@@ -35,12 +36,12 @@ export default function ReportForm({ trekId, washroomPoints, wildlife }: Props) 
       </label>
 
       <fieldset>
-        <legend className="text-sm font-semibold">Were these washrooms there and usable?</legend>
+        <legend className="text-sm font-semibold">Were these washrooms there, and were they clean?</legend>
         <div className="mt-2 space-y-3">
           {washroomPoints.map((p) => (
             <div key={p.id} className="rounded-xl border border-line bg-white p-3">
               <p className="text-sm font-medium">{p.name}</p>
-              <div className="mt-2 grid grid-cols-3 gap-2">
+              <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {choices.map((c) => (
                   <label
                     key={c.value}

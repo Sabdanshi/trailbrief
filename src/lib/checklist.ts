@@ -43,6 +43,7 @@ export function fitnessPlan(trek: Trek): FitnessPlan {
 /** Prep checklist derived from what is (and isn't) on this trail. */
 export function buildChecklist(trek: Trek): ChecklistGroup[] {
   const hasDryTop = trek.points.some((p) => p.washroom === "no");
+  const hasBasic = trek.points.some((p) => p.washroom === "basic");
   const waterGaps = trek.points.filter((p) => !p.water).length;
   const noNetwork = trek.points.some((p) => p.network === "none");
   const w = new Set(trek.wildlife);
@@ -60,7 +61,10 @@ export function buildChecklist(trek: Trek): ChecklistGroup[] {
     id: "use-start",
     text: `Use the washroom at ${trek.dryStretch.from} before you set off. The stretch after it has no washroom for ${trek.dryStretch.hours} hours.`,
   });
-  if (hasDryTop) {
+  if (hasBasic) {
+    washroom.items.push({ id: "seat-spray", text: "Washrooms on this trail are often not clean: carry toilet-seat sanitiser spray and your own soap." });
+  }
+  if (hasDryTop || hasBasic) {
     washroom.items.push(
       { id: "kit", text: "Pack a small washroom kit: tissues, wet wipes, hand sanitiser." },
       { id: "bags", text: "Carry 2–3 zip-lock bags to pack out used tissues and pads. Don't leave them on the trail." },
