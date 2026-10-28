@@ -7,6 +7,7 @@ export type Briefing = {
   reportCount: number;
   lastReport: string | null;
   points: Record<string, PointSignal>;
+  womenComfort: { average: number; count: number } | null;
   wildlife: { name: string; count: number; lastSeen: string | null; fromBase: boolean }[];
   tips: { text: string; name: string | null; date: string }[];
 };
@@ -34,10 +35,15 @@ export function buildBriefing(trek: Trek, reports: Report[]): Briefing {
     }
   }
 
+  const ratings = reports.map((r) => r.women_comfort).filter((n): n is number => typeof n === "number");
+
   return {
     reportCount: reports.length,
     lastReport: reports.reduce<string | null>((max, r) => (!max || r.trek_date > max ? r.trek_date : max), null),
     points,
+    womenComfort: ratings.length
+      ? { average: Math.round((ratings.reduce((a, b) => a + b, 0) / ratings.length) * 10) / 10, count: ratings.length }
+      : null,
     wildlife: [...wildlife.entries()]
       .map(([name, v]) => ({ name, ...v }))
       .sort((a, b) => b.count - a.count),

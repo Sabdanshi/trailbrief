@@ -42,7 +42,11 @@ export function buildChecklist(trek: Trek): ChecklistGroup[] {
       { id: "tell", text: "Tell someone your route and when you expect to be back." },
     );
   }
-  safety.items.push({ id: "dark", text: "Plan to be back before dark." });
+  safety.items.push(
+    { id: "dark", text: "Plan to be back before dark." },
+    { id: "emergency", text: `Save 112 (India emergency) and note the nearest medical help: ${trek.medical}` },
+    { id: "cash", text: `Carry enough cash: the last ATM is in ${trek.lastAtm}.` },
+  );
   groups.push(safety);
 
   const wild: ChecklistGroup = { title: "Wildlife reported on this trail", items: [] };

@@ -6,8 +6,8 @@ import "./globals.css";
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "TrailBrief – know what's on the trail before you go",
-  description: "Washrooms, water, network and wildlife on Indian treks, confirmed by trekkers who just walked them.",
+  title: "TrailBrief – know your trek before you go",
+  description: "Everything to know before an Indian trek, for women trekkers especially: washrooms, safety, network, wildlife and what to pack.",
 };
 
 export const viewport: Viewport = { themeColor: "#2f5d46", width: "device-width", initialScale: 1 };

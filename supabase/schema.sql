@@ -6,6 +6,7 @@ create table if not exists reports (
   trek_date date not null,
   points jsonb not null default '{}'::jsonb,
   wildlife text[] not null default '{}',
+  women_comfort int check (women_comfort between 1 and 5),
   tip text check (char_length(tip) <= 280),
   name text check (char_length(name) <= 40),
   created_at timestamptz not null default now()

@@ -68,9 +68,23 @@ export default async function TrekPage({
       )}
 
       <h1 className="mt-3 text-2xl font-bold tracking-tight">{trek.name}</h1>
-      <p className="text-sm text-muted">
-        {trek.region} · starts at {trek.start} · {trek.oneWayKm} km one way · {trek.roundTripHours} h round trip
-      </p>
+      <p className="text-sm text-muted">{trek.region}</p>
+
+      <dl className="mt-4 grid grid-cols-2 gap-2 text-sm">
+        {[
+          ["Difficulty", trek.difficulty],
+          ["Highest point", `${trek.maxAltitudeM.toLocaleString("en-IN")} m`],
+          ["Distance", `${trek.oneWayKm} km one way from ${trek.start}`],
+          ["Time", `${trek.roundTripHours} h round trip`],
+          ["Best season", trek.bestSeason],
+          ["Permits", trek.permits],
+        ].map(([k, v]) => (
+          <div key={k} className="rounded-lg border border-line bg-white p-2.5">
+            <dt className="text-xs text-muted">{k}</dt>
+            <dd className="font-medium">{v}</dd>
+          </div>
+        ))}
+      </dl>
 
       <section className="mt-5 rounded-xl border border-amber/40 bg-amber-soft p-4">
         <p className="text-sm font-medium text-amber">Longest stretch without a washroom</p>
@@ -84,8 +98,28 @@ export default async function TrekPage({
         {briefing.reportCount
           ? `Based on trail data + ${briefing.reportCount} trekker report${briefing.reportCount > 1 ? "s" : ""} (latest trek ${formatDate(briefing.lastReport)}).`
           : "Based on trail data. No trekker reports yet."}{" "}
-        Best season: {trek.bestSeason}.
       </p>
+
+      <section className="mt-6 rounded-xl border border-line bg-white p-4">
+        <div className="flex items-baseline justify-between gap-3">
+          <h2 className="font-semibold">For women trekkers</h2>
+          <p className="shrink-0 text-sm">
+            {briefing.womenComfort ? (
+              <>
+                <strong>{briefing.womenComfort.average}/5</strong>{" "}
+                <span className="text-muted">comfort · {briefing.womenComfort.count} rating{briefing.womenComfort.count > 1 ? "s" : ""}</span>
+              </>
+            ) : (
+              <span className="text-muted">No comfort ratings yet</span>
+            )}
+          </p>
+        </div>
+        <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm">
+          {trek.forWomen.map((t) => (
+            <li key={t}>{t}</li>
+          ))}
+        </ul>
+      </section>
 
       <section className="mt-6">
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted">On the trail, going up</h2>
@@ -146,6 +180,30 @@ export default async function TrekPage({
         <p className="mt-2 text-xs text-muted">
           Sightings are reported by trekkers and are not a safety guarantee. Follow forest department and local guide advice.
         </p>
+      </section>
+
+      <section className="mt-6">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted">Getting there and staying</h2>
+        <dl className="space-y-2 text-sm">
+          {[
+            ["How to reach", trek.gettingThere],
+            ["Where to stay", trek.stay],
+            ["Last ATM", trek.lastAtm],
+          ].map(([k, v]) => (
+            <div key={k} className="rounded-lg border border-line bg-white p-3">
+              <dt className="text-xs text-muted">{k}</dt>
+              <dd>{v}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
+      <section className="mt-6 rounded-xl border border-alert/30 bg-alert-soft p-4 text-sm">
+        <h2 className="font-semibold text-alert">In an emergency</h2>
+        <p className="mt-1">
+          Call <a href="tel:112" className="font-semibold underline">112</a> (India emergency number).
+        </p>
+        <p className="mt-1">Nearest medical help: {trek.medical}</p>
       </section>
 
       {(briefing.tips.length > 0 || trek.tips.length > 0) && (

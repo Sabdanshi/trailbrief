@@ -28,13 +28,15 @@ export async function submitReport(_: FormState, form: FormData): Promise<FormSt
   }
   const wildlife = form.getAll("wildlife").map(String).filter((w) => (WILDLIFE as readonly string[]).includes(w));
   const tip = clean(form.get("tip"), 280);
+  const comfort = Number(form.get("womenComfort"));
+  const women_comfort = comfort >= 1 && comfort <= 5 ? comfort : null;
 
-  if (!Object.keys(points).length && !wildlife.length && !tip) {
-    return { error: "Tell us about at least one washroom, a wildlife sighting or a tip." };
+  if (!Object.keys(points).length && !wildlife.length && !tip && !women_comfort) {
+    return { error: "Tell us about at least one washroom, your comfort rating, a wildlife sighting or a tip." };
   }
 
   try {
-    await addReport({ trek_id: trek.id, trek_date: date, points, wildlife, tip, name: clean(form.get("name"), 40) });
+    await addReport({ trek_id: trek.id, trek_date: date, points, wildlife, women_comfort, tip, name: clean(form.get("name"), 40) });
   } catch {
     return { error: "Couldn't save your report. Please try again." };
   }

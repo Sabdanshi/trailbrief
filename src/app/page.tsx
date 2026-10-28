@@ -11,10 +11,11 @@ export default async function Home() {
   return (
     <>
       <section className="mb-8">
-        <h1 className="text-3xl font-bold leading-tight tracking-tight">Know what&apos;s on the trail before you go.</h1>
+        <h1 className="text-3xl font-bold leading-tight tracking-tight">Know your trek before you go.</h1>
         <p className="mt-3 text-muted">
-          Where the last washroom is, where you can refill water, where the network drops and what wildlife trekkers have
-          seen, confirmed by people who just walked it.
+          Everything you&apos;d Google or watch vlogs for, in one 2-minute read: washrooms, safety, network, wildlife,
+          how to get there and what to pack. Written with women trekkers in mind and confirmed by people who just did
+          the trek.
         </p>
       </section>
 
@@ -32,7 +33,9 @@ export default async function Home() {
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="font-semibold">{trek.name}</p>
-                    <p className="text-sm text-muted">{trek.region}</p>
+                    <p className="text-sm text-muted">
+                      {trek.region} · {trek.difficulty}
+                    </p>
                   </div>
                   <span aria-hidden className="text-muted">→</span>
                 </div>

@@ -9,6 +9,7 @@ export type Report = {
   trek_date: string;
   points: Record<string, PointStatus>;
   wildlife: string[];
+  women_comfort: number | null;
   tip: string | null;
   name: string | null;
   created_at: string;

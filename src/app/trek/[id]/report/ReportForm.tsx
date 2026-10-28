@@ -63,6 +63,26 @@ export default function ReportForm({ trekId, washroomPoints, wildlife }: Props) 
       </fieldset>
 
       <fieldset>
+        <legend className="text-sm font-semibold">If you&apos;re a woman: how safe and comfortable did you feel on this trek?</legend>
+        <p className="mt-1 text-xs text-muted">Think washrooms, privacy, crowds and safety. Optional.</p>
+        <div className="mt-2 grid grid-cols-5 gap-2">
+          {[1, 2, 3, 4, 5].map((n) => (
+            <label
+              key={n}
+              className="cursor-pointer rounded-lg border border-line bg-white py-2.5 text-center has-[:checked]:border-forest has-[:checked]:bg-moss has-[:checked]:font-semibold"
+            >
+              <input type="radio" name="womenComfort" value={n} className="sr-only" />
+              {n}
+            </label>
+          ))}
+        </div>
+        <div className="mt-1 flex justify-between text-xs text-muted">
+          <span>Uncomfortable</span>
+          <span>Very comfortable</span>
+        </div>
+      </fieldset>
+
+      <fieldset>
         <legend className="text-sm font-semibold">Any wildlife on the trail?</legend>
         <div className="mt-2 flex flex-wrap gap-2">
           {wildlife.map((w) => (
