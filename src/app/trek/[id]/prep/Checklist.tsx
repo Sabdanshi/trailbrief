@@ -52,7 +52,7 @@ export default function Checklist({ trekId, trekName, dryHours, groups }: Props)
 
   return (
     <>
-      <div className="mt-4 rounded-xl border border-line bg-white p-3">
+      <div className="mt-4 rounded-2xl border border-line bg-white p-3">
         <div className="flex items-center justify-between text-sm">
           <span className="font-medium">Packed</span>
           <span className="text-muted">
@@ -70,7 +70,7 @@ export default function Checklist({ trekId, trekName, dryHours, groups }: Props)
           <ul className="space-y-2">
             {g.items.map((item) => (
               <li key={item.id}>
-                <label className="flex cursor-pointer gap-3 rounded-xl border border-line bg-white p-3 has-[:checked]:border-forest has-[:checked]:bg-moss/50">
+                <label className="flex cursor-pointer gap-3 rounded-2xl border border-line bg-white p-3 has-[:checked]:border-forest has-[:checked]:bg-moss/50">
                   <input
                     type="checkbox"
                     checked={Boolean(done[item.id])}
@@ -88,7 +88,7 @@ export default function Checklist({ trekId, trekName, dryHours, groups }: Props)
       <div className="sticky bottom-4 mt-8">
         <button
           onClick={share}
-          className="w-full rounded-xl bg-forest px-4 py-3.5 font-semibold text-white shadow-lg hover:bg-forest-dark"
+          className="w-full rounded-2xl bg-forest px-4 py-3.5 font-semibold text-white shadow-lg hover:bg-forest-dark"
         >
           Share with your trek group
         </button>

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
@@ -14,6 +15,8 @@ export type TrekCard = {
   dryHours: string;
   reportCount: number;
   lastReport: string | null;
+  photo: string | null;
+  photoAlt: string;
 };
 
 const normalise = (s: string) => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
@@ -45,11 +48,11 @@ export default function TrekSearch({ treks }: { treks: TrekCard[] }) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search treks, places or states"
-          className="block w-full rounded-xl border border-line bg-white py-3 pl-10 pr-3 text-base shadow-sm outline-none focus:border-forest"
+          className="block w-full rounded-2xl border border-line bg-white py-3.5 pl-10 pr-3 text-base shadow-sm outline-none focus:border-forest focus:ring-2 focus:ring-forest/15"
         />
       </label>
 
-      <h2 className="mb-3 mt-6 text-sm font-semibold uppercase tracking-wide text-muted">
+      <h2 className="mb-3 mt-6 font-display text-2xl font-semibold tracking-tight">
         {query.trim() ? `${results.length} trek${results.length === 1 ? "" : "s"} found` : "Pick your trek"}
       </h2>
 
@@ -65,30 +68,44 @@ export default function TrekSearch({ treks }: { treks: TrekCard[] }) {
           </Link>
         </div>
       ) : (
-        <ul className="space-y-3">
+        <ul className="grid gap-4 sm:grid-cols-2">
           {results.map((trek) => (
             <li key={trek.id}>
               <Link
                 href={`/trek/${trek.id}`}
-                className="block rounded-xl border border-line bg-white p-4 shadow-sm transition hover:border-forest focus-visible:outline-2 focus-visible:outline-forest"
+                className="group block overflow-hidden rounded-2xl border border-line bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-2 focus-visible:outline-forest"
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="font-semibold">{trek.name}</p>
-                    <p className="text-sm text-muted">
-                      {trek.region} · {trek.difficulty} · {trek.daysOnFoot.replace(/ \(.*\)$/, "")}
+                <div className="relative aspect-[16/10] bg-moss">
+                  {trek.photo && (
+                    <Image
+                      src={trek.photo}
+                      alt={trek.photoAlt}
+                      fill
+                      sizes="(min-width: 640px) 320px, 100vw"
+                      className="object-cover transition duration-500 group-hover:scale-105"
+                    />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                  <span className="absolute right-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-ink">
+                    {trek.difficulty}
+                  </span>
+                  <div className="absolute inset-x-0 bottom-0 p-3 text-white">
+                    <p className="font-display text-xl font-semibold leading-tight">{trek.name}</p>
+                    <p className="text-sm text-white/85">
+                      {trek.region} · {trek.daysOnFoot.replace(/ \(.*\)$/, "")}
                     </p>
                   </div>
-                  <span aria-hidden className="text-muted">→</span>
                 </div>
-                <p className="mt-3 inline-block rounded-md bg-amber-soft px-2 py-1 text-sm text-ink">
-                  🚻 Up to <strong>{trek.dryHours} h</strong> without a washroom
-                </p>
-                <p className="mt-2 text-xs text-muted">
-                  {trek.reportCount
-                    ? `${trek.reportCount} trekker report${trek.reportCount > 1 ? "s" : ""} · last trek ${trek.lastReport}`
-                    : "No trekker reports yet · be the first"}
-                </p>
+                <div className="p-3">
+                  <p className="inline-block rounded-md bg-amber-soft px-2 py-1 text-sm text-ink">
+                    🚻 Up to <strong>{trek.dryHours} h</strong> without a washroom
+                  </p>
+                  <p className="mt-2 text-xs text-muted">
+                    {trek.reportCount
+                      ? `${trek.reportCount} trekker report${trek.reportCount > 1 ? "s" : ""} · last trek ${trek.lastReport}`
+                      : "No trekker reports yet · be the first"}
+                  </p>
+                </div>
               </Link>
             </li>
           ))}

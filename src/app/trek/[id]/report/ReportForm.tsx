@@ -39,7 +39,7 @@ export default function ReportForm({ trekId, washroomPoints, wildlife }: Props) 
         <legend className="text-sm font-semibold">Were these washrooms there, and were they clean?</legend>
         <div className="mt-2 space-y-3">
           {washroomPoints.map((p) => (
-            <div key={p.id} className="rounded-xl border border-line bg-white p-3">
+            <div key={p.id} className="rounded-2xl border border-line bg-white p-3">
               <p className="text-sm font-medium">{p.name}</p>
               <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {choices.map((c) => (
@@ -133,7 +133,7 @@ export default function ReportForm({ trekId, washroomPoints, wildlife }: Props) 
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-xl bg-forest px-4 py-3.5 font-semibold text-white shadow-lg hover:bg-forest-dark disabled:opacity-60"
+        className="w-full rounded-2xl bg-forest px-4 py-3.5 font-semibold text-white shadow-lg hover:bg-forest-dark disabled:opacity-60"
       >
         {pending ? "Saving…" : "Submit report"}
       </button>

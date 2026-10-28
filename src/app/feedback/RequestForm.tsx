@@ -30,7 +30,7 @@ export default function RequestForm({ trek }: { trek: string }) {
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-xl bg-forest px-4 py-3.5 font-semibold text-white shadow-lg hover:bg-forest-dark disabled:opacity-60"
+        className="w-full rounded-2xl bg-forest px-4 py-3.5 font-semibold text-white shadow-lg hover:bg-forest-dark disabled:opacity-60"
       >
         {pending ? "Sending…" : "Request this trek"}
       </button>

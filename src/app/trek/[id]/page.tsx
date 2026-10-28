@@ -1,9 +1,13 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTrek, type TrailPoint } from "@/data/treks";
 import { listReports } from "@/lib/store";
 import { buildBriefing, formatDate, formatDuration, type PointSignal } from "@/lib/briefing";
 import { fitnessPlan } from "@/lib/checklist";
+import { trekPhotos } from "@/data/photos";
+import { trekMaps } from "@/data/maps";
+import { NearbyMap, TrailMap } from "./Maps";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +22,7 @@ const networkLabel = { good: "Network OK", patchy: "Patchy network", none: "No n
 const sections = [
   ["overview", "Overview"],
   ["women", "For women"],
-  ["trail", "Trail"],
+  ["trail", "Trail map"],
   ["stay-eat", "Stay & eat"],
   ["fitness", "Fitness"],
   ["safety", "Safety & medical"],
@@ -34,11 +38,11 @@ function Chip({ tone, children }: { tone: "good" | "warn" | "bad"; children: Rea
 }
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
-  return <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted">{children}</h2>;
+  return <h2 className="mb-3 font-display text-2xl font-semibold tracking-tight">{children}</h2>;
 }
 
 function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`rounded-xl border border-line bg-white p-3 ${className}`}>{children}</div>;
+  return <div className={`rounded-2xl border border-line bg-white p-3.5 shadow-sm ${className}`}>{children}</div>;
 }
 
 function Quote({ text, name, date }: { text: string; name: string | null; date: string }) {
@@ -88,10 +92,47 @@ export default async function TrekPage({
 
   const briefing = buildBriefing(trek, await listReports(trek.id));
   const fit = fitnessPlan(trek);
+  const photo = trekPhotos[trek.id];
+  const maps = trekMaps[trek.id];
 
   return (
     <>
-      <Link href="/" className="text-sm text-muted hover:underline">← All treks</Link>
+      <header className="relative -mx-4 -mt-6 overflow-hidden bg-forest-dark sm:mx-0 sm:mt-0 sm:rounded-3xl">
+        {photo && (
+          <Image src={photo.src} alt={photo.alt} fill priority sizes="(min-width: 672px) 672px, 100vw" className="object-cover" />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-black/10" />
+        <div className="relative flex min-h-80 flex-col justify-between p-5 text-white">
+          <Link href="/" className="self-start rounded-full bg-black/35 px-3 py-1.5 text-sm backdrop-blur hover:bg-black/50">
+            ← All treks
+          </Link>
+          <div>
+            <p className="text-sm text-white/85">{trek.region}</p>
+            <h1 className="font-display text-4xl font-semibold leading-tight tracking-tight">{trek.name}</h1>
+            <ul className="mt-3 flex flex-wrap gap-1.5 text-xs font-medium">
+              {[
+                trek.difficulty,
+                `${trek.maxAltitudeM.toLocaleString("en-IN")} m high`,
+                `${trek.oneWayKm} km one way`,
+                trek.bestSeason,
+              ].map((t) => (
+                <li key={t} className="rounded-full bg-white/20 px-2.5 py-1 backdrop-blur">
+                  {t}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </header>
+      {photo && (
+        <p className="mt-1.5 text-[11px] text-muted">
+          Photo:{" "}
+          <a href={photo.source} className="underline" target="_blank" rel="noopener noreferrer">
+            {photo.author}
+          </a>
+          , {photo.license}, via Wikimedia Commons
+        </p>
+      )}
 
       {reported && (
         <p role="status" className="mt-4 rounded-lg bg-moss p-3 text-sm text-forest-dark">
@@ -99,19 +140,17 @@ export default async function TrekPage({
         </p>
       )}
 
-      <h1 className="mt-3 text-2xl font-bold tracking-tight">{trek.name}</h1>
-      <p className="text-sm text-muted">{trek.region}</p>
-      <p className="mt-1 text-xs text-muted">
+      <p className="mt-3 text-xs text-muted">
         {briefing.reportCount
           ? `Trail data + ${briefing.reportCount} trekker report${briefing.reportCount > 1 ? "s" : ""} (latest trek ${formatDate(briefing.lastReport)})`
           : "Trail data · no trekker reports yet"}
       </p>
 
-      <nav aria-label="Jump to section" className="-mx-4 mt-4 overflow-x-auto px-4">
+      <nav aria-label="Jump to section" className="sticky top-[53px] z-10 -mx-4 mt-3 overflow-x-auto bg-paper/90 px-4 py-2 backdrop-blur">
         <ul className="flex gap-2 whitespace-nowrap">
           {sections.map(([anchor, label]) => (
             <li key={anchor}>
-              <a href={`#${anchor}`} className="block rounded-full border border-line bg-white px-3 py-1.5 text-sm hover:border-forest">
+              <a href={`#${anchor}`} className="block rounded-full border border-line bg-white px-3 py-1.5 text-sm shadow-sm hover:border-forest hover:text-forest">
                 {label}
               </a>
             </li>
@@ -191,7 +230,12 @@ export default async function TrekPage({
       {/* Trail */}
       <section id="trail" className="scroll-mt-20 pt-8">
         <SectionTitle>On the trail, going up</SectionTitle>
-        <ol className="relative space-y-4 border-l-2 border-line pl-5">
+        {maps && (
+          <div className="mb-6">
+            <TrailMap trek={trek} map={maps.trail} />
+          </div>
+        )}
+        <ol className="relative ml-2.5 space-y-4 border-l-2 border-line pl-6">
           {trek.points.map((p, i) => (
             <li key={p.id} className="relative">
               {p.day && p.day !== trek.points[i - 1]?.day && (
@@ -199,10 +243,12 @@ export default async function TrekPage({
               )}
               <span
                 aria-hidden
-                className={`absolute -left-[27px] ${p.day && p.day !== trek.points[i - 1]?.day ? "top-8" : "top-1.5"} h-3 w-3 rounded-full border-2 border-paper ${
+                className={`absolute -left-[38px] ${p.day && p.day !== trek.points[i - 1]?.day ? "top-9" : "top-3"} grid h-6 w-6 place-items-center rounded-full border-2 border-paper text-[11px] font-bold text-white ${
                   p.washroom === "no" ? "bg-alert" : "bg-forest"
                 }`}
-              />
+              >
+                {i + 1}
+              </span>
               <Card>
                 <div className="flex items-baseline justify-between gap-2">
                   <p className="font-semibold">{p.name}</p>
@@ -279,6 +325,13 @@ export default async function TrekPage({
         </Card>
         <p className="mt-2 text-xs text-muted">Prices are approximate and change with the season. Last ATM: {trek.lastAtm}.</p>
 
+        {maps && (
+          <>
+            <h3 className="mb-2 mt-6 font-semibold">What&apos;s nearby</h3>
+            <NearbyMap trek={trek} map={maps.nearby} />
+          </>
+        )}
+
         {briefing.recommendations.length > 0 && (
           <>
             <h3 className="mb-2 mt-4 font-semibold">Trekkers recommend</h3>
@@ -348,7 +401,7 @@ export default async function TrekPage({
       <div className="sticky bottom-4 mt-8">
         <Link
           href={`/trek/${trek.id}/prep`}
-          className="block rounded-xl bg-forest px-4 py-3.5 text-center font-semibold text-white shadow-lg hover:bg-forest-dark"
+          className="block rounded-2xl bg-forest px-4 py-3.5 text-center font-semibold text-white shadow-lg shadow-forest/30 hover:bg-forest-dark"
         >
           Get my prep checklist
         </Link>

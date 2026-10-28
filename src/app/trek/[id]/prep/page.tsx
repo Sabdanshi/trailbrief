@@ -16,7 +16,7 @@ export default async function PrepPage({ params }: { params: Promise<{ id: strin
   return (
     <>
       <Link href={`/trek/${trek.id}`} className="text-sm text-muted hover:underline">← {trek.name} briefing</Link>
-      <h1 className="mt-3 text-2xl font-bold tracking-tight">Your prep for {trek.name}</h1>
+      <h1 className="mt-3 font-display text-3xl font-semibold leading-tight tracking-tight">Your prep for {trek.name}</h1>
       <p className="mt-1 text-sm text-muted">Built from what is, and isn&apos;t, on this trail. Tick things off as you pack.</p>
       <Checklist trekId={trek.id} trekName={trek.name} dryHours={trek.dryStretch.hours} groups={buildChecklist(trek)} />
     </>

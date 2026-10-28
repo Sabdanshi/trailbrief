@@ -4,7 +4,7 @@
   --color-paper: #f6f3ec;
   --color-ink: #1f2a24;
   --color-muted: #5f6b63;
-  --color-line: #ddd6c8;
+  --color-line: #e2dbcd;
   --color-forest: #2f5d46;
   --color-forest-dark: #234635;
   --color-moss: #e3ecdf;
@@ -13,10 +13,19 @@
   --color-alert: #b4432f;
   --color-alert-soft: #f8e3dd;
   --font-sans: var(--font-geist-sans);
+  --font-display: var(--font-fraunces);
 }
 
 body {
   background: var(--color-paper);
   color: var(--color-ink);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+/* Text on maps: white halo so labels stay readable on any terrain. */
+.map-label {
+  paint-order: stroke;
+  stroke: #fff;
+  stroke-width: 6px;
+  stroke-linejoin: round;
 }
