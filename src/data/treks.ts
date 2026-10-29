@@ -39,7 +39,9 @@ export type Trek = {
   /** Extra advice on when to go (and when not to). */
   bestTimeNote: string;
   stayOptions: { place: string; what: string; price: string }[];
-  eatOptions: string[];
+  eatOptions: { place: string; what: string; price: string }[];
+  /** The one thing to know about food on this trek, e.g. where the last food is. */
+  foodWarning: string;
   /** The part of this trek that needs specific training. */
   fitnessNote: string;
   lastAtm: string;
@@ -83,7 +85,8 @@ export const treks: Trek[] = [
     forWomen: ["No washroom or changing spot inside the valley: change and use the washroom in Ghangaria.", "The trail is shared with Hemkund Sahib pilgrims, so you are rarely alone in daytime.", "Monsoon season: carry a poncho and quick-dry layers; wet clothes are hard to change on the trail."],
     bestTimeNote: "Flowers peak from mid-July to mid-August. The park is open June to October and closed in winter.",
     stayOptions: [{"place": "Ghangaria", "what": "Guesthouses, hotels and a GMVN rest house; the Gurudwara also offers simple stay", "price": "₹1,500–4,000 a night (more in peak season)"}, {"place": "Govindghat", "what": "Hotels, if you arrive late before the climb to Ghangaria", "price": "₹1,000–3,000 a night"}],
-    eatOptions: ["Dhabas in Ghangaria: dal-chawal, parathas, Maggi.", "Free langar at the Ghangaria Gurudwara.", "Nothing is sold inside the valley: pack lunch from Ghangaria."],
+    eatOptions: [{"place": "Govindghat", "what": "Dhabas and small restaurants by the road: thali, parathas, tea", "price": "₹100–250 a meal"}, {"place": "Ghangaria", "what": "Dhabas with dal-chawal, rajma, parathas and Maggi; most will pack lunch for the valley", "price": "₹150–300 a meal"}, {"place": "Ghangaria Gurudwara", "what": "Free langar (community meal), open to everyone", "price": "Free"}, {"place": "Inside the valley", "what": "Nothing is sold", "price": "Carry your own"}],
+    foodWarning: "No food inside the valley: carry lunch, snacks and water from Ghangaria for the whole 5–6 hour walk.",
     fitnessNote: "Day 1 is a 10 km climb from Govindghat to Ghangaria before you even reach the valley.",
     points: [
       { id: "ghangaria", name: "Ghangaria", minFromStart: 0, km: 0, washroom: "yes", water: true, food: "yes", network: "patchy", note: "Last proper washroom. Hotels and dhabas." },
@@ -114,7 +117,8 @@ export const treks: Trek[] = [
     forWomen: ["Washrooms are frequent but often not clean, and queues are long. Carry toilet-seat sanitiser spray, tissues and your own soap.", "Very crowded in peak season; keep valuables close.", "Modest clothing is expected at the temple.", "Ponies and palkis are available if you need to stop walking."],
     bestTimeNote: "The temple opens around May and closes around Diwali. Avoid July–August: monsoon landslides often close the route.",
     stayOptions: [{"place": "Kedarnath", "what": "GMVN cottages and tents, dharamshalas", "price": "₹1,000–5,000 a night; book early"}, {"place": "Sonprayag / Guptkashi", "what": "Hotels the night before the trek", "price": "₹1,000–3,000 a night"}],
-    eatOptions: ["Dhabas all along the route: tea, Maggi, parathas.", "Simple meals and bhandaras at Kedarnath."],
+    eatOptions: [{"place": "Gaurikund", "what": "Dhabas and sweet shops at the start", "price": "₹100–250 a meal"}, {"place": "Jungle Chatti, Bhimbali, Linchauli", "what": "Tea, Maggi, parathas and snacks every 1–2 km", "price": "₹50–150 a snack"}, {"place": "Kedarnath", "what": "Simple restaurants with thalis; free bhandaras (community meals) in season", "price": "₹150–350 a meal"}],
+    foodWarning: "Food is available all the way up, but prices rise the higher you go. Keep snacks for long queues.",
     fitnessNote: "16 km uphill, usually 10+ hours: build endurance with long walks, not just short runs.",
     points: [
       { id: "gaurikund", name: "Gaurikund", minFromStart: 0, km: 0, washroom: "basic", water: true, food: "yes", network: "good", note: "Washrooms available but often not clean." },
@@ -147,7 +151,8 @@ export const treks: Trek[] = [
     forWomen: ["Washrooms at Chopta camps are usually shared and basic.", "Busy in daytime; the Chandrashila stretch is quieter, so go with company.", "Modest clothing is expected at the temple."],
     bestTimeNote: "Clearest Himalayan views in October–November. Snow from December to March; the Chopta road can close.",
     stayOptions: [{"place": "Chopta", "what": "Camps and tents, usually with meals", "price": "₹1,000–3,000 a night"}, {"place": "Ukhimath / Sari", "what": "Homestays and small hotels", "price": "₹800–2,500 a night"}],
-    eatOptions: ["Dhabas at Chopta.", "Maggi and tea points along the trail up to Tungnath."],
+    eatOptions: [{"place": "Chopta", "what": "Dhabas by the road; camps usually include meals", "price": "₹150–300 a meal"}, {"place": "On the way to Tungnath", "what": "Tea and Maggi points", "price": "₹50–150 a snack"}, {"place": "Tungnath temple", "what": "A few dhabas near the temple", "price": "₹100–200 a meal"}],
+    foodWarning: "Nothing is sold beyond Tungnath temple: carry water and a snack for Chandrashila.",
     fitnessNote: "Short but steep throughout; the last stretch to Chandrashila is the steepest.",
     points: [
       { id: "chopta", name: "Chopta", minFromStart: 0, km: 0, washroom: "basic", water: true, food: "yes", network: "patchy" },
@@ -178,7 +183,8 @@ export const treks: Trek[] = [
     forWomen: ["Use a homestay washroom in Sari before you start; there is none at the lake.", "Short, popular trail; comfortable for small groups of women.", "Start back well before dark: the forest path has no lights."],
     bestTimeNote: "October–November mornings give the clearest Chaukhamba reflection in the lake.",
     stayOptions: [{"place": "Sari village", "what": "Homestays with home-cooked meals", "price": "₹800–2,000 a night"}],
-    eatOptions: ["Homestay meals in Sari.", "Tea and snack stalls near the lake."],
+    eatOptions: [{"place": "Sari village", "what": "Homestay meals: dal, rice, roti, local greens; often included in the stay", "price": "₹150–300 a meal"}, {"place": "Sari village", "what": "Tea stalls and small shops", "price": "₹30–100"}, {"place": "Near the lake", "what": "Tea and snack stalls, mostly in season", "price": "₹30–100"}],
+    foodWarning: "Stalls near the lake are not always open: carry water and a snack.",
     fitnessNote: "A gentle climb; fine for beginners with basic fitness.",
     points: [
       { id: "sari", name: "Sari village", minFromStart: 0, km: 0, washroom: "yes", water: true, food: "yes", network: "good", note: "Homestays and shops." },
@@ -208,7 +214,8 @@ export const treks: Trek[] = [
     forWomen: ["Nongriat homestays have shared, basic bathrooms; carry your own toiletries.", "Changing spots near the natural pools are limited: wear quick-dry clothes.", "Very steep steps: knees take a beating on the way down."],
     bestTimeNote: "Avoid heavy monsoon (June–August): the steps get slippery and rivers rise. Winter is dry and pleasant.",
     stayOptions: [{"place": "Nongriat", "what": "Village homestays, shared bathrooms, meals included", "price": "₹500–1,500 a night"}, {"place": "Sohra (Cherrapunji)", "what": "Hotels and resorts", "price": "₹1,500–5,000 a night"}],
-    eatOptions: ["Home-cooked Khasi meals at Nongriat homestays.", "Snack and juice shops along the steps."],
+    eatOptions: [{"place": "Tyrna", "what": "Small shops: tea, water, biscuits", "price": "₹30–100"}, {"place": "On the steps", "what": "Shops with juice, fruit, Maggi and snacks", "price": "₹30–150"}, {"place": "Nongriat", "what": "Homestay meals: rice, dal and local Khasi dishes", "price": "₹150–300 a meal"}],
+    foodWarning: "Carry cash: small shops don't take cards and there is little network.",
     fitnessNote: "About 3,500 steps down and then back up: train on stairs.",
     points: [
       { id: "tyrna", name: "Tyrna village (top of the steps)", minFromStart: 0, km: 0, washroom: "yes", water: true, food: "yes", network: "good" },
@@ -239,7 +246,8 @@ export const treks: Trek[] = [
     forWomen: ["No washroom on the climb or the fort: plan for 3–4 hours without one.", "Very crowded on monsoon weekends; weekdays are quieter.", "Rocks are slippery: wear shoes with grip, not sports sandals."],
     bestTimeNote: "Best in monsoon for waterfalls and greenery, but very slippery. Go on a weekday to avoid crowds.",
     stayOptions: [{"place": "Lonavala", "what": "Hotels and homestays (no stay at the fort)", "price": "₹1,500–5,000 a night"}],
-    eatOptions: ["Vada pav and bhajiya at Bhaje village.", "Seasonal stalls on the climb in monsoon.", "Dhabas near Malavli station."],
+    eatOptions: [{"place": "Malavli station", "what": "Dhabas and snack stalls near the station", "price": "₹100–250 a meal"}, {"place": "Bhaje village", "what": "Vada pav, bhajiya, poha and tea at the base", "price": "₹30–150"}, {"place": "Mid-climb", "what": "Corn, tea and lemon water stalls, monsoon only", "price": "₹30–100"}],
+    foodWarning: "Nothing on the fort: carry water and lunch if you plan to spend time at the top.",
     fitnessNote: "Rocky, steep sections, some through waterfalls: practise uphill walking.",
     points: [
       { id: "malavli", name: "Malavli station", minFromStart: 0, km: 0, washroom: "yes", water: true, food: "yes", network: "good" },
@@ -270,7 +278,8 @@ export const treks: Trek[] = [
     forWomen: ["No washrooms between villages and camps; at camps you rely on the operator's toilet tents. Ask the operator if there are separate ones for women.", "4–5 days of camping with no bathing: pack wet wipes, dry shampoo, and pads or a cup with opaque disposal bags.", "No network after Sankri for about 5 days: share your dates and operator's contact with family before you go.", "Villages are conservative: modest clothing is appreciated."],
     bestTimeNote: "Rhododendrons bloom in April–May; October–November has the clearest views. Heavy snow from late December.",
     stayOptions: [{"place": "Sankri", "what": "Guesthouses and homestays before and after the trek", "price": "₹800–2,000 a night"}, {"place": "On the trail", "what": "Tents at campsites, usually arranged by a trek operator with meals", "price": "Usually included in the operator's trek fee"}, {"place": "Gangad / Osla", "what": "Simple village homestays", "price": "₹500–1,000 a night"}],
-    eatOptions: ["Dhabas in Sankri and Taluka.", "On the trail, the operator's kitchen team cooks all meals.", "Village homestays serve simple home-cooked food."],
+    eatOptions: [{"place": "Sankri", "what": "Dhabas and guesthouse meals", "price": "₹150–300 a meal"}, {"place": "Taluka", "what": "Last shops for snacks, biscuits and tea", "price": "₹30–150"}, {"place": "Gangad / Osla", "what": "Simple home-cooked meals at village homestays", "price": "₹150–300 a meal"}, {"place": "Campsites", "what": "The operator's kitchen team cooks all meals", "price": "Included in the trek fee"}],
+    foodWarning: "No shops after Taluka for 4–5 days: your operator's kitchen cooks everything, or you carry it in.",
     fitnessNote: "5 days of walking 8–11 km a day up to 3,566 m: build endurance with long walks and stairs with a backpack.",
     points: [
       { id: "taluka", name: "Taluka (road head)", day: 1, minFromStart: 0, km: 0, washroom: "basic", water: true, food: "yes", network: "none", note: "Reached by jeep from Sankri. Last shops for snacks." },

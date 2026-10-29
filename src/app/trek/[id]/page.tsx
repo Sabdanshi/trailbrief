@@ -315,14 +315,21 @@ export default async function TrekPage({
             </li>
           ))}
         </ul>
-        <Card className="mt-2 text-sm">
-          <p className="font-semibold">🍲 Food</p>
-          <ul className="mt-1 list-disc space-y-1 pl-5">
-            {trek.eatOptions.map((e) => (
-              <li key={e}>{e}</li>
-            ))}
-          </ul>
-        </Card>
+        <h3 className="mb-2 mt-6 font-semibold">Where to eat</h3>
+        <p className="mb-2 rounded-2xl border border-amber/40 bg-amber-soft p-3 text-sm">⚠ {trek.foodWarning}</p>
+        <ul className="space-y-2 text-sm">
+          {trek.eatOptions.map((e) => (
+            <li key={e.place + e.what}>
+              <Card>
+                <div className="flex items-baseline justify-between gap-2">
+                  <p className="font-semibold">🍲 {e.place}</p>
+                  <p className="shrink-0 text-xs text-muted">{e.price}</p>
+                </div>
+                <p className="mt-1">{e.what}</p>
+              </Card>
+            </li>
+          ))}
+        </ul>
         <p className="mt-2 text-xs text-muted">Prices are approximate and change with the season. Last ATM: {trek.lastAtm}.</p>
 
         {maps && (

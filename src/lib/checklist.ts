@@ -81,6 +81,7 @@ export function buildChecklist(trek: Trek): ChecklistGroup[] {
   });
   water.items.push({ id: "sip", text: "Sip small amounts often instead of skipping water to avoid a washroom break." });
   if (trek.points.some((p) => p.food !== "yes")) water.items.push({ id: "snacks", text: "Pack snacks: food is not available on every stretch." });
+  water.items.push({ id: "food-plan", text: trek.foodWarning });
   groups.push(water);
 
   if (trek.points.some((p) => (p.day ?? 1) > 1)) {
