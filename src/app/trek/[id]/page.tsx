@@ -91,7 +91,7 @@ function StatusBanner({ status, trekId }: { status: TrailStatus; trekId: string 
                 {i.where && <span className="font-normal"> near {i.where}</span>}
               </p>
               <p className="text-muted">
-                {i.count} trekker{i.count > 1 ? "s" : ""} · last {daysAgo(i.lastDate)}
+                {i.count} trekker{i.count > 1 ? "s" : ""} · last reported {daysAgo(i.lastDate)}
                 {i.note && <> · “{i.note}”</>}
               </p>
             </li>
