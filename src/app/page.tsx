@@ -1,6 +1,6 @@
 import { treks } from "@/data/treks";
 import { listReports } from "@/lib/store";
-import { formatDate } from "@/lib/briefing";
+import { buildBriefing, formatDate } from "@/lib/briefing";
 import Image from "next/image";
 import { heroPhoto, trekPhotos } from "@/data/photos";
 import TrekSearch, { type TrekCard } from "./TrekSearch";
@@ -24,6 +24,7 @@ export default async function Home() {
       dryHours: trek.dryStretch.hours,
       reportCount: mine.length,
       lastReport: last ? formatDate(last) : null,
+      status: buildBriefing(trek, mine).status.kind,
       photo: trekPhotos[trek.id]?.src ?? null,
       photoAlt: trekPhotos[trek.id]?.alt ?? "",
     };

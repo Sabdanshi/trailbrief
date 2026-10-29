@@ -13,6 +13,10 @@ export type Report = {
   women_comfort: number | null;
   tip: string | null;
   recommendation: string | null;
+  /** Trail problems seen (ids from TRAIL_ISSUES), where, and a short note. */
+  issues: string[];
+  issue_point: string | null;
+  issue_note: string | null;
   name: string | null;
   created_at: string;
 };

@@ -29,6 +29,11 @@ create table if not exists trek_requests (
   created_at timestamptz not null default now()
 );
 
+-- Trail status: problems trekkers flag (added after launch; safe to re-run).
+alter table reports add column if not exists issues text[] not null default '{}';
+alter table reports add column if not exists issue_point text;
+alter table reports add column if not exists issue_note text check (char_length(issue_note) <= 140);
+
 alter table trek_requests enable row level security;
 alter table reports enable row level security;
 alter table feedback enable row level security;

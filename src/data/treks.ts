@@ -64,6 +64,19 @@ export const WILDLIFE = [
   "Mules / horses",
 ] as const;
 
+/** Problems a trekker can flag after their trek. They show as a "Trail status" on the briefing. */
+export const TRAIL_ISSUES = [
+  { id: "landslide", label: "Landslide or rockfall" },
+  { id: "closed", label: "Route closed or diverted" },
+  { id: "snow", label: "Snow or ice" },
+  { id: "slippery", label: "Very slippery or muddy" },
+  { id: "river", label: "High stream or river" },
+  { id: "crowded", label: "Very crowded, long queues" },
+  { id: "unsafe", label: "Felt unsafe (harassment, theft)" },
+] as const;
+
+export type TrailIssue = (typeof TRAIL_ISSUES)[number]["id"];
+
 export const treks: Trek[] = [
   {
     id: "valley-of-flowers",

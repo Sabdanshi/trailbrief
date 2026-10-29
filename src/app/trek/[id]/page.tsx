@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTrek, type TrailPoint } from "@/data/treks";
 import { listReports } from "@/lib/store";
-import { buildBriefing, formatDate, formatDuration, type PointSignal } from "@/lib/briefing";
+import { buildBriefing, daysAgo, formatDate, formatDuration, RECENT_DAYS, type PointSignal, type TrailStatus } from "@/lib/briefing";
 import { fitnessPlan } from "@/lib/checklist";
 import { trekPhotos } from "@/data/photos";
 import { trekMaps } from "@/data/maps";
@@ -78,6 +78,58 @@ function Confirmation({ point, signal }: { point: TrailPoint; signal: PointSigna
   return <p className="mt-2 text-xs text-muted">Not confirmed by a trekker yet</p>;
 }
 
+function StatusBanner({ status, trekId }: { status: TrailStatus; trekId: string }) {
+  if (status.kind === "issues") {
+    return (
+      <section aria-label="Trail status" className="mt-4 rounded-2xl border border-alert/30 bg-alert-soft p-4">
+        <p className="text-xs font-semibold uppercase tracking-wide text-alert">Trail status · reported by trekkers</p>
+        <ul className="mt-2 space-y-2.5">
+          {status.issues.map((i) => (
+            <li key={i.id} className="text-sm">
+              <p className="font-semibold">
+                ⚠ {i.label}
+                {i.where && <span className="font-normal"> near {i.where}</span>}
+              </p>
+              <p className="text-muted">
+                {i.count} trekker{i.count > 1 ? "s" : ""} · last {daysAgo(i.lastDate)}
+                {i.note && <> · “{i.note}”</>}
+              </p>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-3 text-xs text-muted">
+          Check with local authorities before you go: call 112 or the district helpline.
+        </p>
+      </section>
+    );
+  }
+  if (status.kind === "clear") {
+    return (
+      <section aria-label="Trail status" className="mt-4 flex items-start gap-3 rounded-2xl border border-forest/20 bg-moss p-4 text-sm">
+        <span aria-hidden className="mt-0.5 h-2.5 w-2.5 shrink-0 rounded-full bg-forest ring-4 ring-forest/20" />
+        <p>
+          <strong>No problems reported.</strong>{" "}
+          <span className="text-muted">
+            {status.recentReports} trekker{status.recentReports > 1 ? "s" : ""} in the last {RECENT_DAYS} days · latest{" "}
+            {daysAgo(status.lastDate)}
+          </span>
+        </p>
+      </section>
+    );
+  }
+  return (
+    <section aria-label="Trail status" className="mt-4 rounded-2xl border border-line bg-white p-4 text-sm">
+      <p>
+        <strong>No recent trail reports.</strong>{" "}
+        <span className="text-muted">Nobody has reported this trek in the last {RECENT_DAYS} days.</span>
+      </p>
+      <Link href={`/trek/${trekId}/report`} className="mt-1 inline-block font-medium text-forest underline underline-offset-4">
+        Did it recently? Tell others what it&apos;s like now
+      </Link>
+    </section>
+  );
+}
+
 export default async function TrekPage({
   params,
   searchParams,
@@ -139,6 +191,8 @@ export default async function TrekPage({
           Thanks! Your report is now part of this briefing.
         </p>
       )}
+
+      <StatusBanner status={briefing.status} trekId={trek.id} />
 
       <p className="mt-3 text-xs text-muted">
         {briefing.reportCount

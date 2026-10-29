@@ -17,6 +17,7 @@ export type TrekCard = {
   lastReport: string | null;
   photo: string | null;
   photoAlt: string;
+  status: "issues" | "clear" | "unknown";
 };
 
 const normalise = (s: string) => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
@@ -86,6 +87,15 @@ export default function TrekSearch({ treks }: { treks: TrekCard[] }) {
                     />
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                  {trek.status !== "unknown" && (
+                    <span
+                      className={`absolute left-3 top-3 rounded-full px-2.5 py-1 text-xs font-semibold ${
+                        trek.status === "issues" ? "bg-alert text-white" : "bg-forest text-white"
+                      }`}
+                    >
+                      {trek.status === "issues" ? "⚠ Trail issue reported" : "● Clear lately"}
+                    </span>
+                  )}
                   <span className="absolute right-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-ink">
                     {trek.difficulty}
                   </span>

@@ -1,9 +1,18 @@
-import type { Trek } from "@/data/treks";
+import { TRAIL_ISSUES, type Trek } from "@/data/treks";
 import type { Report } from "@/lib/store";
 
 export type PointSignal = { there: number; dirty: number; missing: number; lastSeen: string | null };
 
+/** Reports from treks done in the last RECENT_DAYS count towards the current trail status. */
+export const RECENT_DAYS = 21;
+
+export type TrailStatus =
+  | { kind: "issues"; issues: { id: string; label: string; count: number; lastDate: string; where: string | null; note: string | null }[] }
+  | { kind: "clear"; recentReports: number; lastDate: string }
+  | { kind: "unknown" };
+
 export type Briefing = {
+  status: TrailStatus;
   reportCount: number;
   lastReport: string | null;
   points: Record<string, PointSignal>;
@@ -36,9 +45,26 @@ export function buildBriefing(trek: Trek, reports: Report[]): Briefing {
     }
   }
 
+  const cutoff = new Date(Date.now() - RECENT_DAYS * 86_400_000).toISOString().slice(0, 10);
+  const recent = reports.filter((r) => r.trek_date >= cutoff).sort((a, b) => b.trek_date.localeCompare(a.trek_date));
+  let status: TrailStatus = { kind: "unknown" };
+  if (recent.length) {
+    const issues = TRAIL_ISSUES.flatMap(({ id, label }) => {
+      const hits = recent.filter((r) => (r.issues ?? []).includes(id));
+      if (!hits.length) return [];
+      const latest = hits[0];
+      const where = trek.points.find((p) => p.id === latest.issue_point)?.name ?? null;
+      return [{ id, label, count: hits.length, lastDate: latest.trek_date, where, note: latest.issue_note }];
+    });
+    status = issues.length
+      ? { kind: "issues", issues: issues.sort((a, b) => b.lastDate.localeCompare(a.lastDate)) }
+      : { kind: "clear", recentReports: recent.length, lastDate: recent[0].trek_date };
+  }
+
   const ratings = reports.map((r) => r.women_comfort).filter((n): n is number => typeof n === "number");
 
   return {
+    status,
     reportCount: reports.length,
     lastReport: reports.reduce<string | null>((max, r) => (!max || r.trek_date > max ? r.trek_date : max), null),
     points,
@@ -66,6 +92,14 @@ export function formatDate(iso: string | null) {
     month: "short",
     year: "numeric",
   });
+}
+
+/** "today", "yesterday", "5 days ago" for a yyyy-mm-dd date. */
+export function daysAgo(iso: string) {
+  const days = Math.round((Date.now() - new Date(iso + "T00:00:00").getTime()) / 86_400_000);
+  if (days <= 0) return "today";
+  if (days === 1) return "yesterday";
+  return `${days} days ago`;
 }
 
 export function formatDuration(min: number) {

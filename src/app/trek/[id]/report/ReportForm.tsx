@@ -7,6 +7,8 @@ type Props = {
   trekId: string;
   washroomPoints: { id: string; name: string }[];
   wildlife: string[];
+  allPoints: { id: string; name: string }[];
+  issues: { id: string; label: string }[];
 };
 
 const choices = [
@@ -16,7 +18,7 @@ const choices = [
   { value: "", label: "Didn't check" },
 ];
 
-export default function ReportForm({ trekId, washroomPoints, wildlife }: Props) {
+export default function ReportForm({ trekId, washroomPoints, wildlife, allPoints, issues }: Props) {
   const [state, action, pending] = useActionState<FormState, FormData>(submitReport, {});
   const today = new Date().toISOString().slice(0, 10);
 
@@ -34,6 +36,45 @@ export default function ReportForm({ trekId, washroomPoints, wildlife }: Props) 
           className="mt-2 block w-full rounded-lg border border-line bg-white px-3 py-2.5"
         />
       </label>
+
+      <fieldset className="rounded-2xl border border-amber/40 bg-amber-soft/60 p-3">
+        <legend className="sr-only">Trail problems</legend>
+        <p className="text-sm font-semibold">Any problems on the trail?</p>
+        <p className="mt-1 text-xs text-muted">Shown as a warning to people doing this trek in the next 3 weeks. Skip if none.</p>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {issues.map((i) => (
+            <label
+              key={i.id}
+              className="cursor-pointer rounded-full border border-line bg-white px-3 py-1.5 text-sm has-[:checked]:border-alert has-[:checked]:bg-alert-soft has-[:checked]:font-medium has-[:checked]:text-alert"
+            >
+              <input type="checkbox" name="issues" value={i.id} className="sr-only" />
+              {i.label}
+            </label>
+          ))}
+        </div>
+        <div className="mt-3 grid gap-2 sm:grid-cols-2">
+          <label className="block text-xs text-muted">
+            Where? (optional)
+            <select name="issuePoint" defaultValue="" className="mt-1 block w-full rounded-lg border border-line bg-white px-3 py-2.5 text-sm text-ink">
+              <option value="">Not sure / whole trail</option>
+              {allPoints.map((p) => (
+                <option key={p.id} value={p.id}>
+                  Near {p.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="block text-xs text-muted">
+            Details (optional)
+            <input
+              name="issueNote"
+              maxLength={140}
+              placeholder="e.g. Path cleared, but a 20 min wait"
+              className="mt-1 block w-full rounded-lg border border-line bg-white px-3 py-2.5 text-sm text-ink"
+            />
+          </label>
+        </div>
+      </fieldset>
 
       <fieldset>
         <legend className="text-sm font-semibold">Were these washrooms there, and were they clean?</legend>

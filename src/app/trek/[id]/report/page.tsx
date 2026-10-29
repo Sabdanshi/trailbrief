@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getTrek, WILDLIFE } from "@/data/treks";
+import { getTrek, TRAIL_ISSUES, WILDLIFE } from "@/data/treks";
 import ReportForm from "./ReportForm";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
@@ -23,6 +23,8 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
         trekId={trek.id}
         washroomPoints={trek.points.filter((p) => p.washroom !== "no").map((p) => ({ id: p.id, name: p.name }))}
         wildlife={[...WILDLIFE]}
+        allPoints={trek.points.map((p) => ({ id: p.id, name: p.name }))}
+        issues={TRAIL_ISSUES.map((i) => ({ id: i.id, label: i.label }))}
       />
     </>
   );
